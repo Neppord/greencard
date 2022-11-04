@@ -1,0 +1,19 @@
+{
+  "name": "greencard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "spago": "spago",
+    "start": "spago run",
+    "test": "spago test",
+    "build": "spago bundle-app --main Main --to dist/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "purescript": "^0.15.6",
+    "spago": "^0.20.9"
+  }
+}
