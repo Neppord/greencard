@@ -10,27 +10,44 @@ data PlantState = Germenation | Flower | Fruit
 
 type CardEffect =  Plant -> Plant
 
-type Card =
+newtype Card = Card
     { growth :: Growth
     , effect :: CardEffect
     }
 
 
 newtype Seed = Seed
-    { germenation :: Int
+    { germination :: Int
     , flower :: Int
     , fruit :: Int
+    , genome :: Array Card
     }
 
 newtype Plant = Plant
     { cards :: Array Card
-    , genome :: Array Card
     , seed :: Seed
     , state :: PlantState
     , timeLeft :: Int
     }
 
+baseSeed :: Seed
+baseSeed = Seed
+    { germination: 10 :: Int
+    , flower: 10 :: Int
+    , genome: [] :: Array Card
+    , fruit: 10 :: Int
+    }
 
 main :: Effect Unit
 main = do
-  log "🍝"
+    let seed = baseSeed
+        plants =
+            [ Plant
+                  { cards: []
+                  , seed: seed
+                  , state: Germenation
+                  , timeLeft: 10
+                  }
+            ]
+
+    log "🍝"
