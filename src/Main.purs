@@ -45,14 +45,19 @@ baseSeed = Seed
     }
 
 
+shuffle :: forall a. Array a -> Effect (Array a)
+shuffle a = do
+    pure a
 
-plant :: Seed -> Plant
-plant (Seed seed) = Plant
-    { cards: seed.genome
-    , stats: seed.stats
-    , daysToHarvest : seed.daysToHarvest
-    , seed : Seed seed
-    }
+plant :: Seed -> Effect Plant
+plant (Seed seed) = do
+    cards <- shuffle seed.genome
+    pure $ Plant
+        { cards
+        , stats: seed.stats
+        , daysToHarvest : seed.daysToHarvest
+        , seed : Seed seed
+        }
 
 drawCard :: Plant -> Maybe Plant
 drawCard (Plant p) = case uncons p.cards of
@@ -69,8 +74,9 @@ tick plants = do
 
 main :: Effect Unit
 main = do
+    p <- plant baseSeed
     log "day 1"
-    newPlants <- tick [ plant baseSeed ]
+    newPlants <- tick [ p ]
     log ""
     log "day 2"
     newerPlants <- tick newPlants
