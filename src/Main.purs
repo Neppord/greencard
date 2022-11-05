@@ -3,12 +3,15 @@ module Main where
 import Prelude
 
 import Cards (Card(..), basicGrowth, basicPrice, basicSeeds)
-import Data.Array (mapMaybe, uncons)
+import Data.Array (length, mapMaybe, replicate, sortWith, uncons, zip)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
 import Data.Show.Generic (genericShow)
+import Data.Traversable (for)
+import Data.Tuple (fst, snd)
 import Effect (Effect)
 import Effect.Console (log)
+import Effect.Random (random)
 import Stats (Stats(..))
 
 newtype Seed = Seed
@@ -47,7 +50,9 @@ baseSeed = Seed
 
 shuffle :: forall a. Array a -> Effect (Array a)
 shuffle a = do
-    pure a
+    let actions = replicate (length a) random
+    numbers <- for actions identity
+    pure $ snd <$> sortWith fst (zip numbers a)
 
 plant :: Seed -> Effect Plant
 plant (Seed seed) = do
@@ -75,12 +80,12 @@ tick plants = do
 main :: Effect Unit
 main = do
     p <- plant baseSeed
-    log "day 1"
+    log "day 0"
     newPlants <- tick [ p ]
     log ""
-    log "day 2"
+    log "day 1"
     newerPlants <- tick newPlants
     log ""
-    log "day 3"
+    log "day 2"
     log $ show newerPlants
     pure unit
