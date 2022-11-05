@@ -2,52 +2,79 @@ module Main where
 
 import Prelude
 
+import Cards (Card(..), basicGrowth, basicPrice, basicSeeds)
+import Data.Array (mapMaybe, uncons)
+import Data.Generic.Rep (class Generic)
+import Data.Maybe (Maybe(..))
+import Data.Show.Generic (genericShow)
 import Effect (Effect)
 import Effect.Console (log)
-
-data Growth = Dead | Growth Int
-data PlantState = Germenation | Flower | Fruit
-
-type CardEffect =  Plant -> Plant
-
-newtype Card = Card
-    { growth :: Growth
-    , effect :: CardEffect
-    }
-
+import Stats (Stats(..))
 
 newtype Seed = Seed
-    { germination :: Int
-    , flower :: Int
-    , fruit :: Int
+    { daysToHarvest :: Int
     , genome :: Array Card
+    , stats :: Stats
     }
 
+derive instance Generic Seed _
+instance Show Seed where
+    show = genericShow
+
 newtype Plant = Plant
-    { cards :: Array Card
+    { daysToHarvest :: Int
+    , cards :: Array Card
+    , stats :: Stats
     , seed :: Seed
-    , state :: PlantState
-    , timeLeft :: Int
     }
+derive instance Generic Plant _
+instance Show Plant where
+    show (Plant p) = show p.stats
 
 baseSeed :: Seed
 baseSeed = Seed
-    { germination: 10 :: Int
-    , flower: 10 :: Int
-    , genome: [] :: Array Card
-    , fruit: 10 :: Int
+    { daysToHarvest: 3
+    , genome:
+        [ basicGrowth
+        , basicGrowth
+        , basicGrowth
+        , basicSeeds
+        , basicPrice
+        ]
+    , stats: Stats { growth: 0, price: 0, seeds: 0}
     }
+
+
+
+plant :: Seed -> Plant
+plant (Seed seed) = Plant
+    { cards: seed.genome
+    , stats: seed.stats
+    , daysToHarvest : seed.daysToHarvest
+    , seed : Seed seed
+    }
+
+drawCard :: Plant -> Maybe Plant
+drawCard (Plant p) = case uncons p.cards of
+    Nothing -> Nothing
+    Just {head: (Card card), tail} -> Just $ Plant $ p
+        { cards = tail
+        , stats = p.stats + card.stats
+        }
+
+tick :: Array Plant -> Effect (Array Plant)
+tick plants = do
+    log $ show plants
+    pure $ mapMaybe drawCard plants
 
 main :: Effect Unit
 main = do
-    let seed = baseSeed
-        plants =
-            [ Plant
-                  { cards: []
-                  , seed: seed
-                  , state: Germenation
-                  , timeLeft: 10
-                  }
-            ]
-
-    log "🍝"
+    log "day 1"
+    newPlants <- tick [ plant baseSeed ]
+    log ""
+    log "day 2"
+    newerPlants <- tick newPlants
+    log ""
+    log "day 3"
+    log $ show newerPlants
+    pure unit
