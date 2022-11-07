@@ -2,8 +2,8 @@ module Main where
 
 import Prelude
 
-import Cards (Card(..), basicGrowth, basicPrice, basicSeeds)
-import Data.Array (foldl, length, mapMaybe, partition, replicate, sortWith, uncons, zip, (..))
+import Cards (Card(..), basicGrowth, basicPrice, basicSeeds, weedCard)
+import Data.Array (drop, foldl, length, mapMaybe, partition, replicate, sortWith, uncons, zip, (..))
 import Data.Foldable (sum)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
@@ -56,7 +56,7 @@ drawCard :: Plant -> Maybe Plant
 drawCard (Plant p) = case uncons p.cards of
     Nothing -> Nothing
     Just {head: (Card card), tail} -> Just $ Plant $ p
-        { cards = tail
+        { cards = drop card.discard tail
         , stats = p.stats + card.stats
         }
 
@@ -84,7 +84,7 @@ harvestPlants :: Player -> Player
 harvestPlants (Player player) = Player $ player
     { plants = harvested.no
     , money = player.money + revenue
-    , seeds = player.seeds <> seeds
+    , seeds = player.seeds <> seeds'
     }
     where
         harvested = partition shouldHarvest player.plants
@@ -92,8 +92,9 @@ harvestPlants (Player player) = Player $ player
             # map (\(Plant {stats}) -> stats)
             # map (\(Stats {price}) -> price)
             # sum
-        seeds = harvested.yes
-            # map (\(Plant p) -> p.seed)
+        seeds' = do
+            (Plant {seed, stats: (Stats {seeds})}) <- harvested.yes
+            replicate seeds seed
 
 plantSeeds :: Player -> Effect Player
 plantSeeds (Player player) = do
@@ -115,7 +116,22 @@ baseSeed = Seed
         [ basicGrowth
         , basicGrowth
         , basicGrowth
+        , basicGrowth
         , basicSeeds
+        , basicSeeds
+        , basicPrice
+        ]
+    , stats: Stats { growth: 0, price: 0, seeds: 0}
+    }
+
+weedSeed :: Seed
+weedSeed = Seed
+    { daysToHarvest: 3
+    , genome:
+        [ basicGrowth
+        , basicGrowth
+        , weedCard
+        , basicPrice
         , basicPrice
         ]
     , stats: Stats { growth: 0, price: 0, seeds: 0}
@@ -124,7 +140,7 @@ baseSeed = Seed
 start :: Player
 start = Player
     { plants: []
-    , seeds: [baseSeed, baseSeed, baseSeed]
+    , seeds: [baseSeed, baseSeed, baseSeed, weedSeed]
     , money: 0
     }
 
