@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import Cards (Card(..), basicGrowth, basicPrice, basicSeeds, weedCard)
+import Cards (Card(..))
 import Data.Array (drop, foldl, length, mapMaybe, partition, replicate, sortWith, uncons, zip, (..))
 import Data.Foldable (sum)
 import Data.Generic.Rep (class Generic)
@@ -12,7 +12,7 @@ import Data.Tuple (fst, snd)
 import Effect (Effect)
 import Effect.Console (log)
 import Effect.Random (random)
-import Seeds (Seed(..))
+import Seeds (Seed(..), baseSeed, weedSeed)
 import Stats (Stats(..))
 
 newtype Plant = Plant
@@ -99,33 +99,6 @@ tick player = do
     player' <- plantSeeds player
     pure $ harvestPlants $ agePlants player'
 
-baseSeed :: Seed
-baseSeed = Seed
-    { daysToHarvest: 3
-    , genome:
-        [ basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicSeeds
-        , basicSeeds
-        , basicPrice
-        ]
-    , stats: Stats { growth: 0, price: 0, seeds: 0}
-    }
-
-weedSeed :: Seed
-weedSeed = Seed
-    { daysToHarvest: 3
-    , genome:
-        [ basicGrowth
-        , basicGrowth
-        , weedCard
-        , basicPrice
-        , basicPrice
-        ]
-    , stats: Stats { growth: 0, price: 0, seeds: 0}
-    }
 
 start :: Player
 start = Player
