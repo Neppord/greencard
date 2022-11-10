@@ -32,24 +32,24 @@ newtype Game = Game
     , money :: Int
     }
 instance Show Game where
-    show (Game player) =
-        "Money: " <> show player.money <> "\n"
-        <> "plants: " <> show (length player.plants) <> "\n"
-        <> "seeds: " <> show (length player.seeds)
+    show (Game game) =
+        "Money: " <> show game.money <> "\n"
+        <> "plants: " <> show (length game.plants) <> "\n"
+        <> "seeds: " <> show (length game.seeds)
 
 agePlants :: Game -> Game
-agePlants (Game player) = Game $ player
-    { plants = mapMaybe age player.plants
+agePlants (Game game) = Game $ game
+    { plants = mapMaybe age game.plants
     }
 
 harvestPlants :: Game -> Game
-harvestPlants (Game player) = Game $ player
+harvestPlants (Game game) = Game $ game
     { plants = harvested.no
-    , money = player.money + revenue
-    , seeds = player.seeds <> seeds'
+    , money = game.money + revenue
+    , seeds = game.seeds <> seeds'
     }
     where
-        harvested = partition shouldHarvest player.plants
+        harvested = partition shouldHarvest game.plants
         revenue = harvested.yes
             # map (\(Plant {stats}) -> stats)
             # map (\(Stats {price}) -> price)
@@ -59,17 +59,17 @@ harvestPlants (Game player) = Game $ player
             replicate seeds seed
 
 plantSeeds :: Game -> Effect Game
-plantSeeds (Game player) = do
-    plants <- sequence $ plant <$> player.seeds
-    pure $ Game $ player
-        { plants = player.plants <> plants
+plantSeeds (Game game) = do
+    plants <- sequence $ plant <$> game.seeds
+    pure $ Game $ game
+        { plants = game.plants <> plants
         , seeds = []
         }
 
 tick :: Game -> Effect Game
-tick player = do
-    player' <- plantSeeds player
-    pure $ harvestPlants $ agePlants player'
+tick game = do
+    game' <- plantSeeds game
+    pure $ harvestPlants $ agePlants game'
 
 start :: Game
 start = Game
@@ -81,11 +81,11 @@ start = Game
 main :: Effect Unit
 main = do
     let numberOfDays = 20
-    player <- start # doX numberOfDays \ d player -> do
+    game <- start # doX numberOfDays \ d game -> do
       log $ "Day " <> show d
-      log $ show player
+      log $ show game
       log ""
-      tick player
+      tick game
     log $ "Day " <> show numberOfDays
-    log $ show player
+    log $ show game
     log ""
