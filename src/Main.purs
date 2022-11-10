@@ -14,8 +14,8 @@ import Seeds (Seed, baseSeed, weedSeed)
 import Stats (Stats(..))
 import Util (doX)
 
-drawCard :: Plant -> Maybe Plant
-drawCard (Plant p) = case uncons p.cards of
+age :: Plant -> Maybe Plant
+age (Plant p) = case uncons p.cards of
     Nothing -> Nothing
     Just {head: (Card card), tail} -> Just $ Plant $ p
         { cards = drop card.discard tail
@@ -39,7 +39,7 @@ instance Show Game where
 
 agePlants :: Game -> Game
 agePlants (Game player) = Game $ player
-    { plants = mapMaybe drawCard player.plants
+    { plants = mapMaybe age player.plants
     }
 
 harvestPlants :: Game -> Game
