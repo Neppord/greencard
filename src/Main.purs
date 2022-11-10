@@ -26,24 +26,24 @@ shouldHarvest :: Plant -> Boolean
 shouldHarvest (Plant {stats: (Stats {growth}), daysToHarvest}) =
     growth >= daysToHarvest
 
-newtype Player = Player
+newtype Game = Game
     { plants :: Array Plant
     , seeds :: Array Seed
     , money :: Int
     }
-instance Show Player where
-    show (Player player) =
+instance Show Game where
+    show (Game player) =
         "Money: " <> show player.money <> "\n"
         <> "plants: " <> show (length player.plants) <> "\n"
         <> "seeds: " <> show (length player.seeds)
 
-agePlants :: Player -> Player
-agePlants (Player player) = Player $ player
+agePlants :: Game -> Game
+agePlants (Game player) = Game $ player
     { plants = mapMaybe drawCard player.plants
     }
 
-harvestPlants :: Player -> Player
-harvestPlants (Player player) = Player $ player
+harvestPlants :: Game -> Game
+harvestPlants (Game player) = Game $ player
     { plants = harvested.no
     , money = player.money + revenue
     , seeds = player.seeds <> seeds'
@@ -58,21 +58,21 @@ harvestPlants (Player player) = Player $ player
             (Plant {seed, stats: (Stats {seeds})}) <- harvested.yes
             replicate seeds seed
 
-plantSeeds :: Player -> Effect Player
-plantSeeds (Player player) = do
+plantSeeds :: Game -> Effect Game
+plantSeeds (Game player) = do
     plants <- sequence $ plant <$> player.seeds
-    pure $ Player $ player
+    pure $ Game $ player
         { plants = player.plants <> plants
         , seeds = []
         }
 
-tick :: Player -> Effect Player
+tick :: Game -> Effect Game
 tick player = do
     player' <- plantSeeds player
     pure $ harvestPlants $ agePlants player'
 
-start :: Player
-start = Player
+start :: Game
+start = Game
     { plants: []
     , seeds: [baseSeed, baseSeed, baseSeed, weedSeed]
     , money: 0
