@@ -4,19 +4,34 @@
     <meta charset="UTF-8">
     <title>Greencards</title>
     <style>
-      .tile {
-        width: 256px;
-        height: 256px;
-        display: inline-block;
-        margin: 0;
-        padding: 0;
-      }
-      .tile-ground {
-        background-image: url("images/ground.png");
-      }
-      .tile-grass {
-        background-image: url("images/grass.png");
-      }
+        .tile-map {
+            display: grid;
+            grid-template-columns: repeat(3, 256px);
+            grid-template-rows: repeat(3, 256px);
+        }
+        .tile {
+            width: 256px;
+            height: 256px;
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+        }
+        .tile-ground {
+            background-image: url("images/ground.png");
+        }
+        .tile-seedling {
+            background-image:
+                    url("images/seedling.png"),
+                    url("images/ground.png");
+        }
+        .tile-plant {
+            background-image:
+                    url("images/plant.png"),
+                    url("images/ground.png");
+        }
+        .tile-grass {
+            background-image: url("images/grass.png");
+        }
     </style>
     <script src="main.js"></script>
     <script>
@@ -24,5 +39,17 @@
     </script>
 </head>
 <body>
-<div class="tile tile-ground"></div><div class="tile tile-ground"></div><div class="tile tile-ground"></div><div class="tile tile-ground"></div><div class="tile tile-ground"></div><div class="tile tile-ground"></div>
+<div class="tile-map">
+    <div class="tile tile-grass"></div>
+    <div class="tile tile-ground"></div>
+    <div class="tile tile-ground"></div>
+
+    <div class="tile tile-ground"></div>
+    <div class="tile tile-seedling"></div>
+    <div class="tile tile-ground"></div>
+
+    <div class="tile tile-ground"></div>
+    <div class="tile tile-ground"></div>
+    <div class="tile tile-plant"></div>
+</div>
 </body></html>
