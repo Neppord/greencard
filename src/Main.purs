@@ -3,44 +3,16 @@ module Main where
 import Prelude
 
 import Cards (Card(..))
-import Data.Array (drop, foldl, length, mapMaybe, partition, replicate, sortWith, uncons, zip, (..))
+import Data.Array (drop, length, mapMaybe, partition, replicate, uncons)
 import Data.Foldable (sum)
-import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
-import Data.Traversable (for, sequence)
-import Data.Tuple (fst, snd)
+import Data.Traversable (sequence)
 import Effect (Effect)
 import Effect.Console (log)
-import Effect.Random (random)
-import Seeds (Seed(..), baseSeed, weedSeed)
+import Plants (Plant(..), plant)
+import Seeds (Seed, baseSeed, weedSeed)
 import Stats (Stats(..))
-
-newtype Plant = Plant
-    { daysToHarvest :: Int
-    , cards :: Array Card
-    , stats :: Stats
-    , seed :: Seed
-    }
-derive instance Generic Plant _
-instance Show Plant where
-    show (Plant p) = show p.stats
-
-
-shuffle :: forall a. Array a -> Effect (Array a)
-shuffle a = do
-    let actions = replicate (length a) random
-    numbers <- for actions identity
-    pure $ snd <$> sortWith fst (zip numbers a)
-
-plant :: Seed -> Effect Plant
-plant (Seed seed) = do
-    cards <- shuffle seed.genome
-    pure $ Plant
-        { cards
-        , stats: seed.stats
-        , daysToHarvest : seed.daysToHarvest
-        , seed : Seed seed
-        }
+import Util (doX)
 
 drawCard :: Plant -> Maybe Plant
 drawCard (Plant p) = case uncons p.cards of
@@ -99,21 +71,12 @@ tick player = do
     player' <- plantSeeds player
     pure $ harvestPlants $ agePlants player'
 
-
 start :: Player
 start = Player
     { plants: []
     , seeds: [baseSeed, baseSeed, baseSeed, weedSeed]
     , money: 0
     }
-
-doX :: forall a. Int -> (Int -> a -> Effect a) -> a -> Effect a
-doX x f = chain ticks
-    where
-        chain :: Array (a -> Effect a) -> a -> Effect a
-        chain = foldl (>=>) pure
-        ticks :: Array (a -> Effect a)
-        ticks =  f <$> 0..x
 
 main :: Effect Unit
 main = do
