@@ -32,7 +32,6 @@ baseSeed = Seed
     , stats: Stats { growth: 0, price: 0, seeds: 0}
     }
 
-
 weedSeed :: Seed
 weedSeed = Seed
     { daysToHarvest: 3
