@@ -54,17 +54,6 @@
     };
   };
 
-  // output/Control.Bind/foreign.js
-  var arrayBind = function(arr) {
-    return function(f) {
-      var result = [];
-      for (var i = 0, l = arr.length; i < l; i++) {
-        Array.prototype.push.apply(result, f(arr[i]));
-      }
-      return result;
-    };
-  };
-
   // output/Control.Apply/foreign.js
   var arrayApply = function(fs) {
     return function(xs) {
@@ -157,11 +146,30 @@
   };
   var liftA1 = function(dictApplicative) {
     var apply2 = apply(dictApplicative.Apply0());
-    var pure1 = pure(dictApplicative);
+    var pure12 = pure(dictApplicative);
     return function(f) {
       return function(a) {
-        return apply2(pure1(f))(a);
+        return apply2(pure12(f))(a);
       };
+    };
+  };
+  var applicativeArray = {
+    pure: function(x) {
+      return [x];
+    },
+    Apply0: function() {
+      return applyArray;
+    }
+  };
+
+  // output/Control.Bind/foreign.js
+  var arrayBind = function(arr) {
+    return function(f) {
+      var result = [];
+      for (var i = 0, l = arr.length; i < l; i++) {
+        Array.prototype.push.apply(result, f(arr[i]));
+      }
+      return result;
     };
   };
 
@@ -257,20 +265,6 @@
       };
     };
   };
-  var partition = function(f) {
-    return function(xs) {
-      var yes = [];
-      var no = [];
-      for (var i = 0; i < xs.length; i++) {
-        var x = xs[i];
-        if (f(x))
-          yes.push(x);
-        else
-          no.push(x);
-      }
-      return { yes, no };
-    };
-  };
   var sortByImpl = function() {
     function mergeFromTo(compare2, fromOrdering, xs1, xs2, from2, to) {
       var mid;
@@ -362,12 +356,12 @@
   // output/Control.Monad/index.js
   var ap = function(dictMonad) {
     var bind2 = bind(dictMonad.Bind1());
-    var pure3 = pure(dictMonad.Applicative0());
+    var pure4 = pure(dictMonad.Applicative0());
     return function(f) {
       return function(a) {
         return bind2(f)(function(f$prime) {
           return bind2(a)(function(a$prime) {
-            return pure3(f$prime(a$prime));
+            return pure4(f$prime(a$prime));
           });
         });
       };
@@ -806,12 +800,12 @@
   var foldMapDefaultR = function(dictFoldable) {
     var foldr2 = foldr(dictFoldable);
     return function(dictMonoid) {
-      var append2 = append(dictMonoid.Semigroup0());
+      var append3 = append(dictMonoid.Semigroup0());
       var mempty2 = mempty(dictMonoid);
       return function(f) {
         return foldr2(function(x) {
           return function(acc) {
-            return append2(f(x))(acc);
+            return append3(f(x))(acc);
           };
         })(mempty2);
       };
@@ -849,13 +843,13 @@
     }
     return function(apply2) {
       return function(map4) {
-        return function(pure3) {
+        return function(pure4) {
           return function(f) {
             return function(array) {
               function go(bot, top2) {
                 switch (top2 - bot) {
                   case 0:
-                    return pure3([]);
+                    return pure4([]);
                   case 1:
                     return map4(array1)(f(array[bot]));
                   case 2:
@@ -901,9 +895,6 @@
       return foldableArray;
     }
   };
-  var sequence = function(dict) {
-    return dict.sequence;
-  };
   var $$for = function(dictApplicative) {
     return function(dictTraversable) {
       var traverse2 = traverse(dictTraversable)(dictApplicative);
@@ -916,6 +907,7 @@
   };
 
   // output/Data.Array/index.js
+  var append2 = /* @__PURE__ */ append(semigroupArray);
   var zip = /* @__PURE__ */ function() {
     return zipWith(Tuple.create);
   }();
@@ -964,6 +956,11 @@
       }
       ;
       return slice(n)(length(xs))(xs);
+    };
+  };
+  var cons = function(x) {
+    return function(xs) {
+      return append2([x])(xs);
     };
   };
   var concatMap = /* @__PURE__ */ flip(/* @__PURE__ */ bind(bindArray));
@@ -1138,50 +1135,168 @@
 
   // output/Game/index.js
   var show2 = /* @__PURE__ */ show(showInt);
-  var sequence2 = /* @__PURE__ */ sequence(traversableArray)(applicativeEffect);
-  var map3 = /* @__PURE__ */ map(functorArray);
-  var append1 = /* @__PURE__ */ append(semigroupArray);
+  var pure3 = /* @__PURE__ */ pure(applicativeEffect);
   var sum2 = /* @__PURE__ */ sum(foldableArray)(semiringInt);
+  var map3 = /* @__PURE__ */ map(functorArray);
   var bind1 = /* @__PURE__ */ bind(bindArray);
+  var append1 = /* @__PURE__ */ append(semigroupArray);
+  var pure1 = /* @__PURE__ */ pure(applicativeArray);
+  var Grass = /* @__PURE__ */ function() {
+    function Grass2() {
+    }
+    ;
+    Grass2.value = new Grass2();
+    return Grass2;
+  }();
+  var Dirt = /* @__PURE__ */ function() {
+    function Dirt2(value0) {
+      this.value0 = value0;
+    }
+    ;
+    Dirt2.create = function(value0) {
+      return new Dirt2(value0);
+    };
+    return Dirt2;
+  }();
   var showGame = {
     show: function(v) {
-      return "Money: " + (show2(v.money) + ("\n" + ("plants: " + (show2(length(v.plants)) + ("\n" + ("seeds: " + show2(length(v.seeds))))))));
+      return "Money: " + (show2(v.money) + ("\n" + ("land: " + (show2(length(v.land)) + ("\n" + ("seeds: " + show2(length(v.seeds))))))));
     }
   };
-  var start = {
-    plants: [],
-    seeds: [baseSeed, baseSeed, baseSeed, weedSeed],
-    money: 0
+  var functorLand = {
+    map: function(f) {
+      return function(m) {
+        if (m instanceof Grass) {
+          return Grass.value;
+        }
+        ;
+        if (m instanceof Dirt) {
+          return new Dirt(f(m.value0));
+        }
+        ;
+        throw new Error("Failed pattern match at Game (line 0, column 0 - line 0, column 0): " + [m.constructor.name]);
+      };
+    }
   };
+  var map1 = /* @__PURE__ */ map(functorLand);
+  var start = /* @__PURE__ */ function() {
+    return {
+      land: [Grass.value, Grass.value, Grass.value, Grass.value, new Dirt(Nothing.value), Grass.value, Grass.value, Grass.value, Grass.value],
+      seeds: [baseSeed, baseSeed, baseSeed, weedSeed],
+      money: 0
+    };
+  }();
   var plantSeeds = function(v) {
+    var go = function(land) {
+      return function(seeds2) {
+        var v1 = uncons(land);
+        if (v1 instanceof Nothing) {
+          return pure3({
+            land,
+            seeds: seeds2
+          });
+        }
+        ;
+        if (v1 instanceof Just && (v1.value0.head instanceof Dirt && v1.value0.head.value0 instanceof Nothing)) {
+          var v2 = uncons(seeds2);
+          if (v2 instanceof Nothing) {
+            return pure3({
+              land,
+              seeds: seeds2
+            });
+          }
+          ;
+          if (v2 instanceof Just) {
+            return function __do2() {
+              var plant$prime = plant(v2.value0.head)();
+              var v3 = go(v1.value0.tail)(v2.value0.tail)();
+              return {
+                land: cons(new Dirt(new Just(plant$prime)))(v3.land),
+                seeds: v3.seeds
+              };
+            };
+          }
+          ;
+          throw new Error("Failed pattern match at Game (line 77, column 50 - line 83, column 80): " + [v2.constructor.name]);
+        }
+        ;
+        if (v1 instanceof Just) {
+          return function __do2() {
+            var v22 = go(v1.value0.tail)(seeds2)();
+            return {
+              land: cons(v1.value0.head)(v22.land),
+              seeds: v22.seeds
+            };
+          };
+        }
+        ;
+        throw new Error("Failed pattern match at Game (line 74, column 25 - line 87, column 57): " + [v1.constructor.name]);
+      };
+    };
     return function __do2() {
-      var plants = sequence2(map3(plant)(v.seeds))();
+      var v1 = go(v.land)(v.seeds)();
       return {
-        plants: append1(v.plants)(plants),
-        seeds: [],
+        land: v1.land,
+        seeds: v1.seeds,
         money: v.money
       };
     };
   };
   var harvestPlants = function(v) {
-    var harvested = partition(shouldHarvest)(v.plants);
+    var harvested = mapMaybe(function(v1) {
+      if (v1 instanceof Dirt && v1.value0 instanceof Just) {
+        var $62 = shouldHarvest(v1.value0.value0);
+        if ($62) {
+          return new Just(v1.value0.value0);
+        }
+        ;
+        return Nothing.value;
+      }
+      ;
+      return Nothing.value;
+    })(v.land);
     var revenue = sum2(map3(function(v1) {
       return v1.price;
     })(map3(function(v1) {
       return v1.stats;
-    })(harvested.yes)));
-    var seeds$prime = bind1(harvested.yes)(function(v1) {
+    })(harvested)));
+    var seeds$prime = bind1(harvested)(function(v1) {
       return replicate(v1.stats.seeds)(v1.seed);
     });
     return {
-      plants: harvested.no,
+      land: map3(function(v2) {
+        if (v2 instanceof Dirt && v2.value0 instanceof Just) {
+          var $74 = shouldHarvest(v2.value0.value0);
+          if ($74) {
+            return new Dirt(Nothing.value);
+          }
+          ;
+          return new Dirt(new Just(v2.value0.value0));
+        }
+        ;
+        return v2;
+      })(v.land),
       seeds: append1(v.seeds)(seeds$prime),
       money: v.money + revenue | 0
     };
   };
   var agePlants = function(v) {
     return {
-      plants: mapMaybe(age)(v.plants),
+      land: function(land) {
+        return bind1(land)(function(l) {
+          return pure1(map1(function(v2) {
+            if (v2 instanceof Nothing) {
+              return Nothing.value;
+            }
+            ;
+            if (v2 instanceof Just) {
+              return age(v2.value0);
+            }
+            ;
+            throw new Error("Failed pattern match at Game (line 34, column 17 - line 36, column 28): " + [v2.constructor.name]);
+          })(l));
+        });
+      }(v.land),
       seeds: v.seeds,
       money: v.money
     };
