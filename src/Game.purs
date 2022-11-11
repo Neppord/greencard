@@ -2,7 +2,7 @@ module Game where
 
 import Prelude
 
-import Data.Array (length, mapMaybe, replicate, uncons, (:))
+import Data.Array (filter, length, mapMaybe, replicate, uncons, (:))
 import Data.Foldable (sum)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
@@ -23,8 +23,26 @@ newtype Game = Game
 instance Show Game where
     show (Game game) =
         "Money: " <> show game.money <> "\n"
-        <> "land: " <> show (length game.land) <> "\n"
-        <> "seeds: " <> show (length game.seeds)
+        <> "Grass: " <> show (grass) <> "\n"
+        <> "Plants: " <> show (plants) <> "\n"
+        <> "Free: " <> show (free) <> "\n"
+        <> "Seeds: " <> show (length game.seeds)
+        where
+            grass = game.land
+                # filter case _ of
+                    Grass -> true
+                    _ -> false
+                # length
+            plants = game.land
+                # filter case _ of
+                    Dirt (Just _) -> true
+                    _ -> false
+                # length
+            free = game.land
+                # filter case _ of
+                    Dirt Nothing -> true
+                    _ -> false
+                # length
 
 agePlants :: Game -> Game
 agePlants (Game game) = Game $ game
@@ -56,7 +74,7 @@ harvestPlants (Game game) = Game $ game
                     if shouldHarvest p
                     then Just p
                     else Nothing
-                x -> Nothing
+                _ -> Nothing
         revenue = harvested
             # map (\(Plant {stats}) -> stats)
             # map (\(Stats {price}) -> price)
