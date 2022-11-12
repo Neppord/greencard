@@ -9,6 +9,8 @@ import Effect (Effect)
 import Plants (Plant(..), age, plant, shouldHarvest)
 import Seeds (Seed, baseSeed, weedSeed)
 import Stats (Stats(..))
+import AppM (AppM)
+import Control.Monad.Trans.Class (lift)
 
 data Land a = Grass | Dirt a
 derive instance Functor Land
@@ -126,9 +128,9 @@ clearGrass (Game game) = Game $ game
                     go {acc: head:acc, land: tail, money}
 
 
-tick :: Game -> Effect Game
+tick :: Game -> AppM Game
 tick game = do
-    game' <- plantSeeds $ clearGrass game
+    game' <- lift $ plantSeeds $ clearGrass game
     pure $ harvestPlants $ agePlants game'
 
 start :: Game

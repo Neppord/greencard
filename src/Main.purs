@@ -6,6 +6,8 @@ import Effect (Effect)
 import Effect.Console (log)
 import Game (start, tick)
 import Util (doX)
+import Control.Monad.Writer.Trans (runWriterT)
+import Data.Tuple (fst)
 
 main :: Effect Unit
 main = do
@@ -14,7 +16,7 @@ main = do
       log $ "Day " <> show d
       log $ show game
       log ""
-      tick game
+      fst <$> runWriterT (tick game)
     log $ "Day " <> show (numberOfDays + 1)
     log $ show game
     log ""
