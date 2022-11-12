@@ -15,6 +15,6 @@ main = do
       log $ show game
       log ""
       tick game
-    log $ "Day " <> show numberOfDays
+    log $ "Day " <> show (numberOfDays + 1)
     log $ show game
     log ""
