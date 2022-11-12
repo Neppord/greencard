@@ -10,7 +10,7 @@ newtype Stats = Stats
     , price :: Int
     , seeds :: Int
     }
-
+derive instance Eq Stats
 derive instance Generic Stats _
 
 instance Show Stats where

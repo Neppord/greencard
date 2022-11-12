@@ -12,7 +12,7 @@ newtype Seed = Seed
     , genome :: Array Card
     , stats :: Stats
     }
-
+derive instance Eq Seed
 derive instance Generic Seed _
 instance Show Seed where
     show = genericShow

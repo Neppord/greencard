@@ -17,6 +17,7 @@ newtype Plant = Plant
     , stats :: Stats
     , seed :: Seed
     }
+derive instance Eq Plant
 derive instance Generic Plant _
 instance Show Plant where
     show (Plant p) = show p.stats

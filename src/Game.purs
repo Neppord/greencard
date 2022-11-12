@@ -2,7 +2,7 @@ module Game where
 
 import Prelude
 
-import Data.Array (filter, length, mapMaybe, replicate, uncons, (:))
+import Data.Array (filter, length, mapMaybe, replicate, reverse, uncons, (:))
 import Data.Foldable (sum)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
@@ -12,6 +12,7 @@ import Stats (Stats(..))
 
 data Land a = Grass | Dirt a
 derive instance Functor Land
+derive instance Eq a => Eq (Land a)
 
 type Field = Array (Land (Maybe Plant))
 
@@ -104,9 +105,30 @@ plantSeeds (Game game) = do
                 {land: land', seeds: seeds'} <- go tail seeds
                 pure {land: head : land', seeds: seeds'}
 
+clearGrass :: Game -> Game
+clearGrass (Game game) = Game $ game
+    { land = reverse result.acc <> result.land
+    , money = result.money
+    }
+    where
+        result = go {acc: [], land: game.land, money: game.money}
+        go {acc, land, money} =
+            if money < 10
+            then {acc, land, money}
+            else case uncons land of
+                Nothing -> {acc, land, money}
+                Just {head: Grass, tail} -> go
+                    { acc: Dirt Nothing : acc
+                    , land: tail
+                    , money: money - 10
+                    }
+                Just {head, tail} ->
+                    go {acc: head:acc, land: tail, money}
+
+
 tick :: Game -> Effect Game
 tick game = do
-    game' <- plantSeeds game
+    game' <- plantSeeds $ clearGrass game
     pure $ harvestPlants $ agePlants game'
 
 start :: Game
@@ -116,6 +138,6 @@ start = Game
         , Grass, Dirt Nothing, Grass
         , Grass, Grass, Grass
         ]
-    , seeds: [baseSeed, baseSeed, baseSeed, weedSeed]
-    , money: 0
+    , seeds: [baseSeed, baseSeed, weedSeed, weedSeed]
+    , money: 30
     }

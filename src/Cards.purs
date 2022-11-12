@@ -12,6 +12,7 @@ newtype Card = Card
     , stats :: Stats
     , discard :: Int
     }
+derive instance Eq Card
 derive instance Generic Card _
 instance Show Card where
     show (Card {name}) = name
