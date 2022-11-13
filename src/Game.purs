@@ -22,6 +22,7 @@ newtype Game = Game
     { land :: Field
     , seeds :: Array Seed
     , money :: Int
+    , day :: Int
     }
 instance Show Game where
     show (Game game) =
@@ -130,12 +131,16 @@ clearGrass (Game game) = Game $ game
 
 tick :: Game -> AppM Game
 tick game = do
-    game' <- lift $ plantSeeds $ clearGrass game
+    game' <- lift $ plantSeeds $ clearGrass $ addOneDay game
     pure $ harvestPlants $ agePlants game'
+
+addOneDay :: Game -> Game
+addOneDay (Game game) = Game game {day = game.day + 1}
 
 start :: Game
 start = Game
-    { land:
+    { day: 0
+    , land:
         [ Grass, Grass, Grass, Grass
         , Grass, Dirt Nothing, Grass, Grass
         , Grass, Grass, Grass, Grass

@@ -1365,6 +1365,7 @@
   var map1 = /* @__PURE__ */ map(functorLand);
   var start = /* @__PURE__ */ function() {
     return {
+      day: 0,
       land: [Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, new Dirt(Nothing.value), Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value],
       seeds: [baseSeed, baseSeed, weedSeed, weedSeed],
       money: 30
@@ -1401,7 +1402,7 @@
             };
           }
           ;
-          throw new Error("Failed pattern match at Game (line 98, column 50 - line 104, column 80): " + [v2.constructor.name]);
+          throw new Error("Failed pattern match at Game (line 99, column 50 - line 105, column 80): " + [v2.constructor.name]);
         }
         ;
         if (v1 instanceof Just) {
@@ -1414,7 +1415,7 @@
           };
         }
         ;
-        throw new Error("Failed pattern match at Game (line 95, column 25 - line 108, column 57): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 96, column 25 - line 109, column 57): " + [v1.constructor.name]);
       };
     };
     return function __do2() {
@@ -1422,15 +1423,16 @@
       return {
         land: v1.land,
         seeds: v1.seeds,
-        money: v.money
+        money: v.money,
+        day: v.day
       };
     };
   };
   var harvestPlants = function(v) {
     var harvested = mapMaybe(function(v1) {
       if (v1 instanceof Dirt && v1.value0 instanceof Just) {
-        var $97 = shouldHarvest(v1.value0.value0);
-        if ($97) {
+        var $99 = shouldHarvest(v1.value0.value0);
+        if ($99) {
           return new Just(v1.value0.value0);
         }
         ;
@@ -1450,8 +1452,8 @@
     return {
       land: map3(function(v2) {
         if (v2 instanceof Dirt && v2.value0 instanceof Just) {
-          var $109 = shouldHarvest(v2.value0.value0);
-          if ($109) {
+          var $111 = shouldHarvest(v2.value0.value0);
+          if ($111) {
             return new Dirt(Nothing.value);
           }
           ;
@@ -1461,7 +1463,8 @@
         return v2;
       })(v.land),
       seeds: append1(v.seeds)(seeds$prime),
-      money: v.money + revenue | 0
+      money: v.money + revenue | 0,
+      day: v.day
     };
   };
   var clearGrass = function(v) {
@@ -1469,8 +1472,8 @@
       var $tco_done = false;
       var $tco_result;
       function $tco_loop(v1) {
-        var $114 = v1.money < 10;
-        if ($114) {
+        var $116 = v1.money < 10;
+        if ($116) {
           $tco_done = true;
           return {
             acc: v1.acc,
@@ -1507,7 +1510,7 @@
           return;
         }
         ;
-        throw new Error("Failed pattern match at Game (line 120, column 18 - line 128, column 58): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 121, column 18 - line 129, column 58): " + [v2.constructor.name]);
       }
       ;
       while (!$tco_done) {
@@ -1524,7 +1527,8 @@
     return {
       land: append1(reverse(result.acc))(result.land),
       seeds: v.seeds,
-      money: result.money
+      money: result.money,
+      day: v.day
     };
   };
   var agePlants = function(v) {
@@ -1540,16 +1544,25 @@
               return age(v2.value0);
             }
             ;
-            throw new Error("Failed pattern match at Game (line 55, column 17 - line 57, column 28): " + [v2.constructor.name]);
+            throw new Error("Failed pattern match at Game (line 56, column 17 - line 58, column 28): " + [v2.constructor.name]);
           })(l));
         });
       }(v.land),
       seeds: v.seeds,
-      money: v.money
+      money: v.money,
+      day: v.day
+    };
+  };
+  var addOneDay = function(v) {
+    return {
+      land: v.land,
+      seeds: v.seeds,
+      money: v.money,
+      day: v.day + 1 | 0
     };
   };
   var tick = function(game) {
-    return bind2(lift3(plantSeeds(clearGrass(game))))(function(game$prime) {
+    return bind2(lift3(plantSeeds(clearGrass(addOneDay(game)))))(function(game$prime) {
       return pure22(harvestPlants(agePlants(game$prime)));
     });
   };
@@ -1699,6 +1712,18 @@
       return function __do2() {
         var w = windowImpl();
         var d = document(w)();
+        var dayElement = getElementById("day")(toNonElementParentNode(d))();
+        (function() {
+          if (dayElement instanceof Nothing) {
+            return unit;
+          }
+          ;
+          if (dayElement instanceof Just) {
+            return setTextContent(show3(v.day))(toNode(dayElement.value0))();
+          }
+          ;
+          throw new Error("Failed pattern match at Render (line 29, column 5 - line 32, column 55): " + [dayElement.constructor.name]);
+        })();
         var moneyElement = getElementById("money")(toNonElementParentNode(d))();
         (function() {
           if (moneyElement instanceof Nothing) {
@@ -1709,7 +1734,7 @@
             return setTextContent(show3(v.money))(toNode(moneyElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 29, column 5 - line 32, column 57): " + [moneyElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 34, column 5 - line 37, column 57): " + [moneyElement.constructor.name]);
         })();
         var seedsElement = getElementById("seeds")(toNonElementParentNode(d))();
         (function() {
@@ -1721,7 +1746,7 @@
             return setTextContent(show3(length(v.seeds)))(toNode(seedsElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 34, column 5 - line 37, column 66): " + [seedsElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 39, column 5 - line 42, column 66): " + [seedsElement.constructor.name]);
         })();
         var collection = getElementsByClassName("tile")(toDocument(d))();
         var elements = toArray(collection)();
@@ -1736,15 +1761,15 @@
             }
             ;
             if (v2.value0 instanceof Dirt && v2.value0.value0 instanceof Just) {
-              var $22 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
-              if ($22) {
+              var $24 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
+              if ($24) {
                 return "tile tile-seedling";
               }
               ;
               return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 41, column 32 - line 51, column 39): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 46, column 32 - line 56, column 39): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };

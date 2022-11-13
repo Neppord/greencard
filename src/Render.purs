@@ -22,9 +22,14 @@ import Web.HTML.HTMLDocument (toDocument, toNonElementParentNode)
 import Web.HTML.Window (document)
 
 render :: Game -> Array Event -> Effect Unit
-render (Game {land, money, seeds}) ( _ :: (Array Event)) = do
+render (Game {day, land, money, seeds}) ( _ :: (Array Event)) = do
     w <- window
     d <- document w
+    dayElement <- getElementById "day" (toNonElementParentNode d)
+    case dayElement of
+        Nothing -> pure unit
+        Just element -> do
+            toNode element # setTextContent (show day)
     moneyElement <- getElementById "money" (toNonElementParentNode d)
     case moneyElement of
         Nothing -> pure unit
