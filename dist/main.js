@@ -677,13 +677,6 @@
     };
   };
 
-  // output/Effect.Console/foreign.js
-  var log = function(s) {
-    return function() {
-      console.log(s);
-    };
-  };
-
   // output/Data.Array/foreign.js
   var replicateFill = function(count) {
     return function(value12) {
@@ -744,11 +737,6 @@
   };
   var reverse = function(l) {
     return l.slice().reverse();
-  };
-  var filter = function(f) {
-    return function(xs) {
-      return xs.filter(f);
-    };
   };
   var sortByImpl = function() {
     function mergeFromTo(compare2, fromOrdering, xs1, xs2, from2, to) {
@@ -1236,28 +1224,16 @@
       return map2(snd)(sortWith2(fst)(zip(numbers)(a)));
     };
   };
-  var doXEvery = /* @__PURE__ */ function() {
-    var go2 = function(y) {
-      return function(t) {
-        return function(x) {
-          return function(f) {
-            return function(a) {
-              return function __do2() {
-                var a$prime = f(y)(a)();
-                var $11 = x > y;
-                if ($11) {
-                  return $$void2(setTimeout2(t)(go2(y + 1 | 0)(t)(x)(f)(a$prime)))();
-                }
-                ;
-                return unit;
-              };
-            };
-          };
+  var doEvery = function(t) {
+    return function(f) {
+      return function(a) {
+        return function __do2() {
+          var a$prime = f(a)();
+          return $$void2(setTimeout2(t)(doEvery(t)(f)(a$prime)))();
         };
       };
     };
-    return go2(0);
-  }();
+  };
 
   // output/Plants/index.js
   var add3 = /* @__PURE__ */ add(semiringStats);
@@ -1294,7 +1270,6 @@
   };
 
   // output/Game/index.js
-  var show2 = /* @__PURE__ */ show(showInt);
   var pure2 = /* @__PURE__ */ pure(applicativeEffect);
   var sum2 = /* @__PURE__ */ sum(foldableArray)(semiringInt);
   var map3 = /* @__PURE__ */ map(functorArray);
@@ -1321,32 +1296,6 @@
     };
     return Dirt2;
   }();
-  var showGame = {
-    show: function(v) {
-      var plants = length(filter(function(v1) {
-        if (v1 instanceof Dirt && v1.value0 instanceof Just) {
-          return true;
-        }
-        ;
-        return false;
-      })(v.land));
-      var grass = length(filter(function(v1) {
-        if (v1 instanceof Grass) {
-          return true;
-        }
-        ;
-        return false;
-      })(v.land));
-      var free = length(filter(function(v1) {
-        if (v1 instanceof Dirt && v1.value0 instanceof Nothing) {
-          return true;
-        }
-        ;
-        return false;
-      })(v.land));
-      return "Money: " + (show2(v.money) + ("\n" + ("Grass: " + (show2(grass) + ("\n" + ("Plants: " + (show2(plants) + ("\n" + ("Free: " + (show2(free) + ("\n" + ("Seeds: " + show2(length(v.seeds))))))))))))));
-    }
-  };
   var functorLand = {
     map: function(f) {
       return function(m) {
@@ -1704,7 +1653,7 @@
   }
 
   // output/Render/index.js
-  var show3 = /* @__PURE__ */ show(showInt);
+  var show2 = /* @__PURE__ */ show(showInt);
   var $$void3 = /* @__PURE__ */ $$void(functorEffect);
   var for_2 = /* @__PURE__ */ for_(applicativeEffect)(foldableArray);
   var render = function(v) {
@@ -1719,7 +1668,7 @@
           }
           ;
           if (dayElement instanceof Just) {
-            return setTextContent(show3(v.day))(toNode(dayElement.value0))();
+            return setTextContent(show2(v.day))(toNode(dayElement.value0))();
           }
           ;
           throw new Error("Failed pattern match at Render (line 29, column 5 - line 32, column 55): " + [dayElement.constructor.name]);
@@ -1731,7 +1680,7 @@
           }
           ;
           if (moneyElement instanceof Just) {
-            return setTextContent(show3(v.money))(toNode(moneyElement.value0))();
+            return setTextContent(show2(v.money))(toNode(moneyElement.value0))();
           }
           ;
           throw new Error("Failed pattern match at Render (line 34, column 5 - line 37, column 57): " + [moneyElement.constructor.name]);
@@ -1743,7 +1692,7 @@
           }
           ;
           if (seedsElement instanceof Just) {
-            return setTextContent(show3(length(v.seeds)))(toNode(seedsElement.value0))();
+            return setTextContent(show2(length(v.seeds)))(toNode(seedsElement.value0))();
           }
           ;
           throw new Error("Failed pattern match at Render (line 39, column 5 - line 42, column 66): " + [seedsElement.constructor.name]);
@@ -1777,20 +1726,13 @@
   };
 
   // output/Main/index.js
-  var show4 = /* @__PURE__ */ show(showInt);
-  var show1 = /* @__PURE__ */ show(showGame);
   var main = function __do() {
     render(start)([])();
-    return doXEvery(500)(100)(function(d) {
-      return function(game) {
-        return function __do2() {
-          log("Day " + show4(d))();
-          log(show1(game))();
-          log("")();
-          var v = runWriterT(tick(game))();
-          render(v.value0)(v.value1)();
-          return v.value0;
-        };
+    return doEvery(500)(function(game) {
+      return function __do2() {
+        var v = runWriterT(tick(game))();
+        render(v.value0)(v.value1)();
+        return v.value0;
       };
     })(start)();
   };
