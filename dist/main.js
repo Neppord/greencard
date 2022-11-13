@@ -1365,7 +1365,7 @@
   var map1 = /* @__PURE__ */ map(functorLand);
   var start = /* @__PURE__ */ function() {
     return {
-      land: [Grass.value, Grass.value, Grass.value, Grass.value, new Dirt(Nothing.value), Grass.value, Grass.value, Grass.value, Grass.value],
+      land: [Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, new Dirt(Nothing.value), Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value],
       seeds: [baseSeed, baseSeed, weedSeed, weedSeed],
       money: 30
     };
