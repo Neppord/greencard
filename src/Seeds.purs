@@ -19,14 +19,19 @@ instance Show Seed where
 
 baseSeed :: Seed
 baseSeed = Seed
-    { daysToHarvest: 3
+    { daysToHarvest: 6
     , genome:
         [ basicGrowth
         , basicGrowth
         , basicGrowth
         , basicGrowth
+        , basicGrowth
+        , basicGrowth
+        , basicGrowth
+        , basicGrowth
         , basicSeeds
         , basicSeeds
+        , basicPrice
         , basicPrice
         ]
     , stats: Stats { growth: 0, price: 0, seeds: 0}
@@ -34,11 +39,16 @@ baseSeed = Seed
 
 weedSeed :: Seed
 weedSeed = Seed
-    { daysToHarvest: 3
+    { daysToHarvest: 6
     , genome:
         [ basicGrowth
         , basicGrowth
+        , basicGrowth
+        , basicGrowth
         , weedCard
+        , weedCard
+        , basicPrice
+        , basicPrice
         , basicPrice
         , basicPrice
         ]

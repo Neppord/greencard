@@ -1190,8 +1190,8 @@
 
   // output/Seeds/index.js
   var weedSeed = {
-    daysToHarvest: 3,
-    genome: [basicGrowth, basicGrowth, weedCard, basicPrice, basicPrice],
+    daysToHarvest: 6,
+    genome: [basicGrowth, basicGrowth, basicGrowth, basicGrowth, weedCard, weedCard, basicPrice, basicPrice, basicPrice, basicPrice],
     stats: {
       growth: 0,
       price: 0,
@@ -1199,8 +1199,8 @@
     }
   };
   var baseSeed = {
-    daysToHarvest: 3,
-    genome: [basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicSeeds, basicSeeds, basicPrice],
+    daysToHarvest: 6,
+    genome: [basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicGrowth, basicSeeds, basicSeeds, basicPrice, basicPrice],
     stats: {
       growth: 0,
       price: 0,
@@ -1709,7 +1709,7 @@
             return setTextContent(show3(v.money))(toNode(moneyElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 30, column 5 - line 33, column 57): " + [moneyElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 29, column 5 - line 32, column 57): " + [moneyElement.constructor.name]);
         })();
         var seedsElement = getElementById("seeds")(toNonElementParentNode(d))();
         (function() {
@@ -1721,7 +1721,7 @@
             return setTextContent(show3(length(v.seeds)))(toNode(seedsElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 35, column 5 - line 38, column 66): " + [seedsElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 34, column 5 - line 37, column 66): " + [seedsElement.constructor.name]);
         })();
         var collection = getElementsByClassName("tile")(toDocument(d))();
         var elements = toArray(collection)();
@@ -1744,7 +1744,7 @@
               return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 42, column 32 - line 52, column 39): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 41, column 32 - line 51, column 39): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };
