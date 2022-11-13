@@ -26,13 +26,14 @@ render (Game game) ( _ :: (Array Event)) = do
     collection <- getElementsByClassName "tile" (toDocument d)
     elements <- toArray collection
     void $ for_ (zip game.land elements) $ \ (Tuple field element) ->
-       element # setClassName case field of
-           Grass -> "tile tile-grass"
-           Dirt (Nothing) -> "tile tile-dirt"
-           Dirt (Just (Plant
-            { stats: (Stats {growth})
-            , seed: (Seed {daysToHarvest
-            })})) ->
-            if growth * 2 < daysToHarvest
-            then "tile tile-seedling"
-            else "tile tile-plant"
+        element # setClassName case field of
+            Grass -> "tile tile-grass"
+            Dirt (Nothing) -> "tile tile-dirt"
+            Dirt (Just (Plant
+                { stats: (Stats {growth})
+                , seed: (Seed {daysToHarvest
+                }
+            )})) ->
+                if growth * 2 < daysToHarvest
+                then "tile tile-seedling"
+                else "tile tile-plant"
