@@ -7,7 +7,6 @@ import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Console (log)
 import Event (Event)
 import Game (Game(..), Land(..))
 import Web.DOM.Document (getElementsByClassName)
@@ -22,7 +21,6 @@ import Seeds (Seed(..))
 
 render :: Game -> Array Event -> Effect Unit
 render (Game game) ( _ :: (Array Event)) = do
-    log "Render"
     w <- window
     d <- document w
     collection <- getElementsByClassName "tile" (toDocument d)
