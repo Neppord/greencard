@@ -136,9 +136,10 @@ tick game = do
 start :: Game
 start = Game
     { land:
-        [ Grass, Grass, Grass
-        , Grass, Dirt Nothing, Grass
-        , Grass, Grass, Grass
+        [ Grass, Grass, Grass, Grass
+        , Grass, Dirt Nothing, Grass, Grass
+        , Grass, Grass, Grass, Grass
+        , Grass, Grass, Grass, Grass
         ]
     , seeds: [baseSeed, baseSeed, weedSeed, weedSeed]
     , money: 30

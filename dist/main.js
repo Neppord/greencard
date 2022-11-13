@@ -1652,10 +1652,15 @@
             }
             ;
             if (v2.value0 instanceof Dirt && v2.value0.value0 instanceof Just) {
-              return "tile tile-seedling";
+              var $16 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
+              if ($16) {
+                return "tile tile-seedling";
+              }
+              ;
+              return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 28, column 31 - line 31, column 49): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 31, column 31 - line 40, column 35): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };

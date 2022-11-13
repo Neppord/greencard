@@ -16,6 +16,9 @@ import Web.DOM.HTMLCollection (toArray)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (toDocument)
 import Web.HTML.Window (document)
+import Plants (Plant(..))
+import Stats (Stats(..))
+import Seeds (Seed(..))
 
 render :: Game -> Array Event -> Effect Unit
 render (Game game) ( _ :: (Array Event)) = do
@@ -28,4 +31,10 @@ render (Game game) ( _ :: (Array Event)) = do
        element # setClassName case field of
            Grass -> "tile tile-grass"
            Dirt (Nothing) -> "tile tile-dirt"
-           Dirt (Just _) -> "tile tile-seedling"
+           Dirt (Just (Plant
+            { stats: (Stats {growth})
+            , seed: (Seed {daysToHarvest
+            })})) ->
+            if growth * 2 < daysToHarvest
+            then "tile tile-seedling"
+            else "tile tile-plant"
