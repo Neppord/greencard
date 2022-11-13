@@ -18,16 +18,10 @@ doX x f = chain ticks
         ticks :: Array (a -> Effect a)
         ticks =  f <$> 0..x
 
-doXEvery :: forall a. Int -> Int -> (Int -> a -> Effect a) -> a -> Effect Unit
-doXEvery = go 0
-    where
-        go y t x f a = do
-            a' <- f y a
-            if (x > y) then
-                void $ setTimeout t do
-                    (go (y + 1) t x  f a')
-            else
-                pure unit
+doEvery :: forall a. Int -> (a -> Effect a) -> a -> Effect Unit
+doEvery t f a = do
+    a' <- f a
+    void $ setTimeout t $ doEvery t f a'
 
 
 
