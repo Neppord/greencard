@@ -147,10 +147,10 @@
   };
   var applySecond = function(dictApply) {
     var apply1 = apply(dictApply);
-    var map4 = map(dictApply.Functor0());
+    var map5 = map(dictApply.Functor0());
     return function(a) {
       return function(b) {
-        return apply1(map4($$const(identity2))(a))(b);
+        return apply1(map5($$const(identity2))(a))(b);
       };
     };
   };
@@ -602,10 +602,10 @@
     };
   };
   var functorWriterT = function(dictFunctor) {
-    var map4 = map(dictFunctor);
+    var map5 = map(dictFunctor);
     return {
       map: function(f) {
-        return mapWriterT(map4(function(v) {
+        return mapWriterT(map5(function(v) {
           return new Tuple(f(v.value0), v.value1);
         }));
       }
@@ -616,7 +616,7 @@
     return function(dictApply) {
       var apply2 = apply(dictApply);
       var Functor0 = dictApply.Functor0();
-      var map4 = map(Functor0);
+      var map5 = map(Functor0);
       var functorWriterT1 = functorWriterT(Functor0);
       return {
         apply: function(v) {
@@ -626,7 +626,7 @@
                 return new Tuple(v3.value0(v4.value0), append3(v3.value1)(v4.value1));
               };
             };
-            return apply2(map4(k)(v))(v1);
+            return apply2(map5(k)(v))(v1);
           };
         },
         Functor0: function() {
@@ -641,14 +641,14 @@
     return function(dictBind) {
       var bind3 = bind(dictBind);
       var Apply0 = dictBind.Apply0();
-      var map4 = map(Apply0.Functor0());
+      var map5 = map(Apply0.Functor0());
       var applyWriterT2 = applyWriterT1(Apply0);
       return {
         bind: function(v) {
           return function(k) {
             return bind3(v)(function(v1) {
               var v2 = k(v1.value0);
-              return map4(function(v3) {
+              return map5(function(v3) {
                 return new Tuple(v3.value0, append3(v1.value1)(v3.value1));
               })(v2);
             });
@@ -977,7 +977,7 @@
       };
     }
     return function(apply2) {
-      return function(map4) {
+      return function(map5) {
         return function(pure3) {
           return function(f) {
             return function(array) {
@@ -986,14 +986,14 @@
                   case 0:
                     return pure3([]);
                   case 1:
-                    return map4(array1)(f(array[bot]));
+                    return map5(array1)(f(array[bot]));
                   case 2:
-                    return apply2(map4(array2)(f(array[bot])))(f(array[bot + 1]));
+                    return apply2(map5(array2)(f(array[bot])))(f(array[bot + 1]));
                   case 3:
-                    return apply2(apply2(map4(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
+                    return apply2(apply2(map5(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
                   default:
                     var pivot = bot + Math.floor((top2 - bot) / 4) * 2;
-                    return apply2(map4(concat2)(go2(bot, pivot)))(go2(pivot, top2));
+                    return apply2(map5(concat2)(go2(bot, pivot)))(go2(pivot, top2));
                 }
               }
               return go2(0, array.length);
@@ -1577,6 +1577,16 @@
     };
   }
 
+  // output/Data.Nullable/foreign.js
+  function nullable(a, r, f) {
+    return a == null ? r : f(a);
+  }
+
+  // output/Data.Nullable/index.js
+  var toMaybe = function(n) {
+    return nullable(n, Nothing.value, Just.create);
+  };
+
   // output/Web.DOM.Element/foreign.js
   var getProp = function(name15) {
     return function(doctype) {
@@ -1608,6 +1618,9 @@
   var _lastElementChild = getEffProp2("lastElementChild");
   var childElementCount = getEffProp2("childElementCount");
 
+  // output/Web.DOM.Element/index.js
+  var toNode = unsafeCoerce2;
+
   // output/Web.DOM.HTMLCollection/foreign.js
   function toArray(list) {
     return function() {
@@ -1615,12 +1628,59 @@
     };
   }
 
+  // output/Web.DOM.Node/foreign.js
+  var getEffProp3 = function(name15) {
+    return function(node) {
+      return function() {
+        return node[name15];
+      };
+    };
+  };
+  var baseURI = getEffProp3("baseURI");
+  var _ownerDocument = getEffProp3("ownerDocument");
+  var _parentNode = getEffProp3("parentNode");
+  var _parentElement = getEffProp3("parentElement");
+  var childNodes = getEffProp3("childNodes");
+  var _firstChild = getEffProp3("firstChild");
+  var _lastChild = getEffProp3("lastChild");
+  var _previousSibling = getEffProp3("previousSibling");
+  var _nextSibling = getEffProp3("nextSibling");
+  var _nodeValue = getEffProp3("nodeValue");
+  var textContent = getEffProp3("textContent");
+  function setTextContent(value12) {
+    return function(node) {
+      return function() {
+        node.textContent = value12;
+      };
+    };
+  }
+
+  // output/Web.DOM.NonElementParentNode/foreign.js
+  function _getElementById(id2) {
+    return function(node) {
+      return function() {
+        return node.getElementById(id2);
+      };
+    };
+  }
+
+  // output/Web.DOM.NonElementParentNode/index.js
+  var map4 = /* @__PURE__ */ map(functorEffect);
+  var getElementById = function(eid) {
+    var $2 = map4(toMaybe);
+    var $3 = _getElementById(eid);
+    return function($4) {
+      return $2($3($4));
+    };
+  };
+
   // output/Web.HTML/foreign.js
   var windowImpl = function() {
     return window;
   };
 
   // output/Web.HTML.HTMLDocument/index.js
+  var toNonElementParentNode = unsafeCoerce2;
   var toDocument = unsafeCoerce2;
 
   // output/Web.HTML.Window/foreign.js
@@ -1631,14 +1691,38 @@
   }
 
   // output/Render/index.js
+  var show3 = /* @__PURE__ */ show(showInt);
   var $$void3 = /* @__PURE__ */ $$void(functorEffect);
   var for_2 = /* @__PURE__ */ for_(applicativeEffect)(foldableArray);
   var render = function(v) {
     return function(v1) {
       return function __do2() {
-        log("Render")();
         var w = windowImpl();
         var d = document(w)();
+        var moneyElement = getElementById("money")(toNonElementParentNode(d))();
+        (function() {
+          if (moneyElement instanceof Nothing) {
+            return unit;
+          }
+          ;
+          if (moneyElement instanceof Just) {
+            return setTextContent(show3(v.money))(toNode(moneyElement.value0))();
+          }
+          ;
+          throw new Error("Failed pattern match at Render (line 30, column 5 - line 33, column 57): " + [moneyElement.constructor.name]);
+        })();
+        var seedsElement = getElementById("seeds")(toNonElementParentNode(d))();
+        (function() {
+          if (seedsElement instanceof Nothing) {
+            return unit;
+          }
+          ;
+          if (seedsElement instanceof Just) {
+            return setTextContent(show3(length(v.seeds)))(toNode(seedsElement.value0))();
+          }
+          ;
+          throw new Error("Failed pattern match at Render (line 35, column 5 - line 38, column 66): " + [seedsElement.constructor.name]);
+        })();
         var collection = getElementsByClassName("tile")(toDocument(d))();
         var elements = toArray(collection)();
         return $$void3(for_2(zip(v.land)(elements))(function(v2) {
@@ -1652,15 +1736,15 @@
             }
             ;
             if (v2.value0 instanceof Dirt && v2.value0.value0 instanceof Just) {
-              var $16 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
-              if ($16) {
+              var $22 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
+              if ($22) {
                 return "tile tile-seedling";
               }
               ;
               return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 31, column 31 - line 40, column 35): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 42, column 32 - line 52, column 39): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };
@@ -1668,14 +1752,14 @@
   };
 
   // output/Main/index.js
-  var show3 = /* @__PURE__ */ show(showInt);
+  var show4 = /* @__PURE__ */ show(showInt);
   var show1 = /* @__PURE__ */ show(showGame);
   var main = function __do() {
     render(start)([])();
     return doXEvery(500)(100)(function(d) {
       return function(game) {
         return function __do2() {
-          log("Day " + show3(d))();
+          log("Day " + show4(d))();
           log(show1(game))();
           log("")();
           var v = runWriterT(tick(game))();

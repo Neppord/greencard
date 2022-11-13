@@ -6,11 +6,11 @@
     <style>
         body {
             margin: 0;
-            background-image: url("images/grass.png");
-            background-repeat: repeat;
         }
         .tile-map {
             display: grid;
+            background-image: url("images/grass.png");
+            background-repeat: repeat;
             grid-template-columns: repeat(4, 256px);
             grid-template-rows: repeat(4, 256px);
         }
@@ -30,9 +30,19 @@
         .tile-grass {
             background-image: url("images/grass.png");
         }
+        #stats {
+            padding-left: 1em;
+        }
+        #money, #seeds {
+            text-align: right;
+            min-width: 5em;
+            display: inline-block;
+            margin-right: 1em;
+        }
     </style>
 </head>
 <body>
+<p id="stats">Money: <span id="money">0</span> Seeds: <span id="seeds">0</span></p>
 <div class="tile-map">
     <div class="tile"></div>
     <div class="tile"></div>
