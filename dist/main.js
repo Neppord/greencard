@@ -147,10 +147,10 @@
   };
   var applySecond = function(dictApply) {
     var apply1 = apply(dictApply);
-    var map5 = map(dictApply.Functor0());
+    var map6 = map(dictApply.Functor0());
     return function(a) {
       return function(b) {
-        return apply1(map5($$const(identity2))(a))(b);
+        return apply1(map6($$const(identity2))(a))(b);
       };
     };
   };
@@ -461,6 +461,17 @@
       };
     };
   };
+  var functorMaybe = {
+    map: function(v) {
+      return function(v1) {
+        if (v1 instanceof Just) {
+          return new Just(v(v1.value0));
+        }
+        ;
+        return Nothing.value;
+      };
+    }
+  };
 
   // output/Effect/foreign.js
   var pureE = function(a) {
@@ -602,10 +613,10 @@
     };
   };
   var functorWriterT = function(dictFunctor) {
-    var map5 = map(dictFunctor);
+    var map6 = map(dictFunctor);
     return {
       map: function(f) {
-        return mapWriterT(map5(function(v) {
+        return mapWriterT(map6(function(v) {
           return new Tuple(f(v.value0), v.value1);
         }));
       }
@@ -616,7 +627,7 @@
     return function(dictApply) {
       var apply2 = apply(dictApply);
       var Functor0 = dictApply.Functor0();
-      var map5 = map(Functor0);
+      var map6 = map(Functor0);
       var functorWriterT1 = functorWriterT(Functor0);
       return {
         apply: function(v) {
@@ -626,7 +637,7 @@
                 return new Tuple(v3.value0(v4.value0), append3(v3.value1)(v4.value1));
               };
             };
-            return apply2(map5(k)(v))(v1);
+            return apply2(map6(k)(v))(v1);
           };
         },
         Functor0: function() {
@@ -641,14 +652,14 @@
     return function(dictBind) {
       var bind3 = bind(dictBind);
       var Apply0 = dictBind.Apply0();
-      var map5 = map(Apply0.Functor0());
+      var map6 = map(Apply0.Functor0());
       var applyWriterT2 = applyWriterT1(Apply0);
       return {
         bind: function(v) {
           return function(k) {
             return bind3(v)(function(v1) {
               var v2 = k(v1.value0);
-              return map5(function(v3) {
+              return map6(function(v3) {
                 return new Tuple(v3.value0, append3(v1.value1)(v3.value1));
               })(v2);
             });
@@ -965,7 +976,7 @@
       };
     }
     return function(apply2) {
-      return function(map5) {
+      return function(map6) {
         return function(pure3) {
           return function(f) {
             return function(array) {
@@ -974,14 +985,14 @@
                   case 0:
                     return pure3([]);
                   case 1:
-                    return map5(array1)(f(array[bot]));
+                    return map6(array1)(f(array[bot]));
                   case 2:
-                    return apply2(map5(array2)(f(array[bot])))(f(array[bot + 1]));
+                    return apply2(map6(array2)(f(array[bot])))(f(array[bot + 1]));
                   case 3:
-                    return apply2(apply2(map5(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
+                    return apply2(apply2(map6(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
                   default:
                     var pivot = bot + Math.floor((top2 - bot) / 4) * 2;
-                    return apply2(map5(concat2)(go2(bot, pivot)))(go2(pivot, top2));
+                    return apply2(map6(concat2)(go2(bot, pivot)))(go2(pivot, top2));
                 }
               }
               return go2(0, array.length);
@@ -1219,7 +1230,7 @@
   var $$void2 = /* @__PURE__ */ $$void(functorEffect);
   var shuffle = function(a) {
     var actions = replicate(length(a))(random);
-    return function __do2() {
+    return function __do5() {
       var numbers = $$for2(actions)(identity4)();
       return map2(snd)(sortWith2(fst)(zip(numbers)(a)));
     };
@@ -1227,7 +1238,7 @@
   var doEvery = function(t) {
     return function(f) {
       return function(a) {
-        return function __do2() {
+        return function __do5() {
           var a$prime = f(a)();
           return $$void2(setTimeout2(t)(doEvery(t)(f)(a$prime)))();
         };
@@ -1241,7 +1252,7 @@
     return v.stats.growth >= v.daysToHarvest;
   };
   var plant = function(v) {
-    return function __do2() {
+    return function __do5() {
       var cards = shuffle(v.genome)();
       return {
         cards,
@@ -1315,9 +1326,9 @@
   var start = /* @__PURE__ */ function() {
     return {
       day: 0,
-      land: [Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, new Dirt(Nothing.value), Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value, Grass.value],
+      land: replicate(16 * 16 | 0)(Grass.value),
       seeds: [baseSeed, baseSeed, weedSeed, weedSeed],
-      money: 30
+      money: 40
     };
   }();
   var plantSeeds = function(v) {
@@ -1341,7 +1352,7 @@
           }
           ;
           if (v2 instanceof Just) {
-            return function __do2() {
+            return function __do5() {
               var plant$prime = plant(v2.value0.head)();
               var v3 = go2(v1.value0.tail)(v2.value0.tail)();
               return {
@@ -1355,7 +1366,7 @@
         }
         ;
         if (v1 instanceof Just) {
-          return function __do2() {
+          return function __do5() {
             var v22 = go2(v1.value0.tail)(seeds2)();
             return {
               land: cons(v1.value0.head)(v22.land),
@@ -1367,7 +1378,7 @@
         throw new Error("Failed pattern match at Game (line 96, column 25 - line 109, column 57): " + [v1.constructor.name]);
       };
     };
-    return function __do2() {
+    return function __do5() {
       var v1 = go2(v.land)(v.seeds)();
       return {
         land: v1.land,
@@ -1380,8 +1391,8 @@
   var harvestPlants = function(v) {
     var harvested = mapMaybe(function(v1) {
       if (v1 instanceof Dirt && v1.value0 instanceof Just) {
-        var $99 = shouldHarvest(v1.value0.value0);
-        if ($99) {
+        var $100 = shouldHarvest(v1.value0.value0);
+        if ($100) {
           return new Just(v1.value0.value0);
         }
         ;
@@ -1401,8 +1412,8 @@
     return {
       land: map3(function(v2) {
         if (v2 instanceof Dirt && v2.value0 instanceof Just) {
-          var $111 = shouldHarvest(v2.value0.value0);
-          if ($111) {
+          var $112 = shouldHarvest(v2.value0.value0);
+          if ($112) {
             return new Dirt(Nothing.value);
           }
           ;
@@ -1421,8 +1432,8 @@
       var $tco_done = false;
       var $tco_result;
       function $tco_loop(v1) {
-        var $116 = v1.money < 10;
-        if ($116) {
+        var $117 = v1.money < 10;
+        if ($117) {
           $tco_done = true;
           return {
             acc: v1.acc,
@@ -1538,6 +1549,13 @@
       };
     };
   }
+  function createElement(localName2) {
+    return function(doc) {
+      return function() {
+        return doc.createElement(localName2);
+      };
+    };
+  }
 
   // output/Data.Nullable/foreign.js
   function nullable(a, r, f) {
@@ -1616,6 +1634,13 @@
       };
     };
   }
+  function appendChild(node) {
+    return function(parent2) {
+      return function() {
+        parent2.appendChild(node);
+      };
+    };
+  }
 
   // output/Web.DOM.NonElementParentNode/foreign.js
   function _getElementById(id2) {
@@ -1656,12 +1681,31 @@
   var show2 = /* @__PURE__ */ show(showInt);
   var $$void3 = /* @__PURE__ */ $$void(functorEffect);
   var for_2 = /* @__PURE__ */ for_(applicativeEffect)(foldableArray);
+  var map5 = /* @__PURE__ */ map(functorMaybe);
+  var getHTMLDocument = function __do() {
+    var window2 = windowImpl();
+    return document(window2)();
+  };
+  var getElementById2 = function(id2) {
+    return function __do5() {
+      var document2 = getHTMLDocument();
+      return getElementById(id2)(toNonElementParentNode(document2))();
+    };
+  };
+  var getDocument = function __do2() {
+    var htmlDocument = getHTMLDocument();
+    return toDocument(htmlDocument);
+  };
+  var getElementsByClassName3 = function(className2) {
+    return function __do5() {
+      var document2 = getDocument();
+      return getElementsByClassName(className2)(document2)();
+    };
+  };
   var render = function(v) {
     return function(v1) {
-      return function __do2() {
-        var w = windowImpl();
-        var d = document(w)();
-        var dayElement = getElementById("day")(toNonElementParentNode(d))();
+      return function __do5() {
+        var dayElement = getElementById2("day")();
         (function() {
           if (dayElement instanceof Nothing) {
             return unit;
@@ -1671,9 +1715,9 @@
             return setTextContent(show2(v.day))(toNode(dayElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 29, column 5 - line 32, column 55): " + [dayElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 68, column 5 - line 71, column 59): " + [dayElement.constructor.name]);
         })();
-        var moneyElement = getElementById("money")(toNonElementParentNode(d))();
+        var moneyElement = getElementById2("money")();
         (function() {
           if (moneyElement instanceof Nothing) {
             return unit;
@@ -1683,9 +1727,9 @@
             return setTextContent(show2(v.money))(toNode(moneyElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 34, column 5 - line 37, column 57): " + [moneyElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 73, column 5 - line 76, column 61): " + [moneyElement.constructor.name]);
         })();
-        var seedsElement = getElementById("seeds")(toNonElementParentNode(d))();
+        var seedsElement = getElementById2("seeds")();
         (function() {
           if (seedsElement instanceof Nothing) {
             return unit;
@@ -1695,9 +1739,9 @@
             return setTextContent(show2(length(v.seeds)))(toNode(seedsElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 39, column 5 - line 42, column 66): " + [seedsElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 78, column 5 - line 81, column 70): " + [seedsElement.constructor.name]);
         })();
-        var collection = getElementsByClassName("tile")(toDocument(d))();
+        var collection = getElementsByClassName3("tile")();
         var elements = toArray(collection)();
         return $$void3(for_2(zip(v.land)(elements))(function(v2) {
           return setClassName(function() {
@@ -1710,26 +1754,56 @@
             }
             ;
             if (v2.value0 instanceof Dirt && v2.value0.value0 instanceof Just) {
-              var $24 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
-              if ($24) {
+              var $28 = (v2.value0.value0.value0.stats.growth * 2 | 0) < v2.value0.value0.value0.seed.daysToHarvest;
+              if ($28) {
                 return "tile tile-seedling";
               }
               ;
               return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 46, column 32 - line 56, column 39): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 85, column 36 - line 95, column 39): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };
     };
   };
+  var createTile = function __do3() {
+    var document2 = getDocument();
+    var element = createElement("div")(document2)();
+    setClassName("tile")(element)();
+    return element;
+  };
+  var addTiles = function(v) {
+    return function __do5() {
+      var map12 = getElementById2("map")();
+      (function() {
+        var v1 = map5(toNode)(map12);
+        if (v1 instanceof Nothing) {
+          return unit;
+        }
+        ;
+        if (v1 instanceof Just) {
+          return for_2(v.land)(function(v2) {
+            return function __do6() {
+              var tile = createTile();
+              return appendChild(toNode(tile))(v1.value0)();
+            };
+          })();
+        }
+        ;
+        throw new Error("Failed pattern match at Render (line 58, column 5 - line 62, column 54): " + [v1.constructor.name]);
+      })();
+      return unit;
+    };
+  };
 
   // output/Main/index.js
-  var main = function __do() {
+  var main = function __do4() {
+    addTiles(start)();
     render(start)([])();
     return doEvery(500)(function(game) {
-      return function __do2() {
+      return function __do5() {
         var v = runWriterT(tick(game))();
         render(v.value0)(v.value1)();
         return v.value0;

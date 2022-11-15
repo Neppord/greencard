@@ -12,38 +12,77 @@ import Game (Game(..), Land(..))
 import Plants (Plant(..))
 import Seeds (Seed(..))
 import Stats (Stats(..))
-import Web.DOM.Document (getElementsByClassName)
-import Web.DOM.Element (setClassName, toNode)
+import Web.DOM.Document (Document)
+import Web.DOM.Document (createElement, getElementsByClassName) as DOM
+import Web.DOM.Element (setClassName, toNode) as DOM
 import Web.DOM.HTMLCollection (toArray)
+import Web.DOM.Internal.Types (Element, HTMLCollection)
 import Web.DOM.Node (setTextContent)
-import Web.DOM.NonElementParentNode (getElementById)
-import Web.HTML (window)
-import Web.HTML.HTMLDocument (toDocument, toNonElementParentNode)
-import Web.HTML.Window (document)
+import Web.DOM.Node (appendChild) as DOM
+import Web.DOM.NonElementParentNode (getElementById) as DOM
+import Web.HTML (window) as HTML
+import Web.HTML.HTMLDocument (HTMLDocument)
+import Web.HTML.HTMLDocument (toDocument, toNonElementParentNode) as HTML
+import Web.HTML.Window (document) as HTML
+
+getHTMLDocument :: Effect HTMLDocument
+getHTMLDocument = do
+    window <- HTML.window
+    HTML.document window
+
+getDocument :: Effect Document
+getDocument = do
+    htmlDocument <- getHTMLDocument
+    pure $ HTML.toDocument htmlDocument
+
+getElementById :: String -> Effect (Maybe Element)
+getElementById id = do
+    document <- getHTMLDocument
+    DOM.getElementById id (HTML.toNonElementParentNode document)
+
+getElementsByClassName :: String -> Effect HTMLCollection
+getElementsByClassName className = do
+    document <- getDocument
+    DOM.getElementsByClassName className document
+
+createTile :: Effect Element
+createTile = do
+    document <- getDocument
+    element <- DOM.createElement "div" (document)
+    DOM.setClassName "tile" element
+    pure element
+
+addTiles :: Game -> Effect Unit
+addTiles (Game game) = do
+    map <- getElementById "map"
+    case DOM.toNode <$> map of
+        Nothing -> pure unit
+        Just mapNode -> for_ game.land \_ -> do
+            tile <- createTile
+            DOM.appendChild (DOM.toNode tile) mapNode
+    pure unit
 
 render :: Game -> Array Event -> Effect Unit
 render (Game {day, land, money, seeds}) ( _ :: (Array Event)) = do
-    w <- window
-    d <- document w
-    dayElement <- getElementById "day" (toNonElementParentNode d)
+    dayElement <- getElementById "day"
     case dayElement of
         Nothing -> pure unit
         Just element -> do
-            toNode element # setTextContent (show day)
-    moneyElement <- getElementById "money" (toNonElementParentNode d)
+            DOM.toNode element # setTextContent (show day)
+    moneyElement <- getElementById "money"
     case moneyElement of
         Nothing -> pure unit
         Just element -> do
-            toNode element # setTextContent (show money)
-    seedsElement <- getElementById "seeds" (toNonElementParentNode d)
+            DOM.toNode element # setTextContent (show money)
+    seedsElement <- getElementById "seeds"
     case seedsElement of
         Nothing -> pure unit
         Just element -> do
-            toNode element # setTextContent (show $ length seeds)
-    collection <- getElementsByClassName "tile" (toDocument d)
+            DOM.toNode element # setTextContent (show $ length seeds)
+    collection <- getElementsByClassName "tile"
     elements <- toArray collection
     void $ for_ (zip land elements) $ \ (Tuple field element) ->
-        element # setClassName case field of
+        element # DOM.setClassName case field of
             Grass -> "tile tile-grass"
             Dirt (Nothing) -> "tile tile-dirt"
             Dirt (Just (Plant

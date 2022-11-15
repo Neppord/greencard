@@ -4,15 +4,22 @@
     <meta charset="UTF-8">
     <title>Greencards</title>
     <style>
+        :root {
+            --tile-size: 64px;
+        }
         body {
             margin: 0;
         }
         .tile-map {
             display: grid;
             background-image: url("images/grass.png");
+            background-size: var(--tile-size) var(--tile-size);
             background-repeat: repeat;
-            grid-template-columns: repeat(4, 256px);
-            grid-template-rows: repeat(4, 256px);
+            grid-template-columns: repeat(16, var(--tile-size));
+            grid-template-rows: repeat(16, var(--tile-size));
+        }
+        .tile {
+            background-size: var(--tile-size) var(--tile-size);
         }
         .tile-dirt {
             background-image: url("images/ground.png");
@@ -49,26 +56,7 @@
 </head>
 <body>
 <p id="stats">Day: <span id="day">0</span> Money: <span id="money">0</span> Seeds: <span id="seeds">0</span></p>
-<div class="tile-map">
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
+<div id="map" class="tile-map">
 </div>
 <script src="main.js"></script>
 </body></html>

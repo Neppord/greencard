@@ -140,12 +140,7 @@ addOneDay (Game game) = Game game {day = game.day + 1}
 start :: Game
 start = Game
     { day: 0
-    , land:
-        [ Grass, Grass, Grass, Grass
-        , Grass, Dirt Nothing, Grass, Grass
-        , Grass, Grass, Grass, Grass
-        , Grass, Grass, Grass, Grass
-        ]
+    , land: replicate (16 * 16) Grass
     , seeds: [baseSeed, baseSeed, weedSeed, weedSeed]
-    , money: 30
+    , money: 40
     }
