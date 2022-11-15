@@ -29,7 +29,7 @@ basicPrice :: Card
 basicPrice = Card
     { description: "Money makes the world go round"
     , name: "Basic Money"
-    , stats: price 1
+    , stats: price 10
     , discard: 0
     }
 

@@ -11,6 +11,7 @@ import Seeds (Seed, baseSeed, weedSeed)
 import Stats (Stats(..))
 import AppM (AppM)
 import Control.Monad.Trans.Class (lift)
+import Data.Tuple (Tuple(..))
 
 data Land a = Grass | Dirt a
 derive instance Functor Land
@@ -93,18 +94,14 @@ plantSeeds (Game game) = do
     pure $ Game $ game { land = land , seeds = seeds }
     where
         go :: Field -> Array Seed -> Effect { land:: Field, seeds :: Array Seed}
-        go land seeds = case uncons land of
-            -- no land left
-            Nothing -> pure {land, seeds}
-            Just {head: Dirt (Nothing), tail} -> case uncons seeds of
-                -- no seeds left
-                Nothing -> pure {land, seeds}
-                Just {head: seed, tail: seedTail} -> do
-                    plant' <- plant seed
-                    {land: land', seeds: seeds'} <- go tail seedTail
-                    pure $ {land: (Dirt (Just plant')) : land' , seeds: seeds'}
-            -- can't plant in this land
-            Just {head, tail} -> do
+        go land seeds = case Tuple (uncons land) (uncons seeds) of
+            Tuple Nothing _ -> pure {land, seeds} -- no land left
+            Tuple _ Nothing -> pure {land, seeds} -- no seeds left
+            Tuple (Just {head: Dirt (Nothing), tail}) (Just {head: seed, tail: seedTail}) -> do
+                plant' <- plant seed
+                {land: land', seeds: seeds'} <- go tail seedTail
+                pure $ {land: (Dirt (Just plant')) : land' , seeds: seeds'}
+            Tuple (Just {head, tail}) _ -> do -- can't plant in this land
                 {land: land', seeds: seeds'} <- go tail seeds
                 pure {land: head : land', seeds: seeds'}
 
@@ -123,7 +120,7 @@ clearGrass (Game game) = Game $ game
                 Just {head: Grass, tail} -> go
                     { acc: Dirt Nothing : acc
                     , land: tail
-                    , money: money - 10
+                    , money: money - 100
                     }
                 Just {head, tail} ->
                     go {acc: head:acc, land: tail, money}
@@ -142,5 +139,5 @@ start = Game
     { day: 0
     , land: replicate (16 * 16) Grass
     , seeds: [baseSeed, baseSeed, weedSeed, weedSeed]
-    , money: 40
+    , money: 400
     }

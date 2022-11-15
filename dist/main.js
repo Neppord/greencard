@@ -1177,7 +1177,7 @@
   var basicPrice = {
     description: "Money makes the world go round",
     name: "Basic Money",
-    stats: /* @__PURE__ */ price(1),
+    stats: /* @__PURE__ */ price(10),
     discard: 0
   };
   var basicGrowth = {
@@ -1328,54 +1328,49 @@
       day: 0,
       land: replicate(16 * 16 | 0)(Grass.value),
       seeds: [baseSeed, baseSeed, weedSeed, weedSeed],
-      money: 40
+      money: 400
     };
   }();
   var plantSeeds = function(v) {
     var go2 = function(land) {
       return function(seeds2) {
-        var v1 = uncons(land);
-        if (v1 instanceof Nothing) {
+        var v1 = new Tuple(uncons(land), uncons(seeds2));
+        if (v1.value0 instanceof Nothing) {
           return pure2({
             land,
             seeds: seeds2
           });
         }
         ;
-        if (v1 instanceof Just && (v1.value0.head instanceof Dirt && v1.value0.head.value0 instanceof Nothing)) {
-          var v2 = uncons(seeds2);
-          if (v2 instanceof Nothing) {
-            return pure2({
-              land,
-              seeds: seeds2
-            });
-          }
-          ;
-          if (v2 instanceof Just) {
-            return function __do5() {
-              var plant$prime = plant(v2.value0.head)();
-              var v3 = go2(v1.value0.tail)(v2.value0.tail)();
-              return {
-                land: cons(new Dirt(new Just(plant$prime)))(v3.land),
-                seeds: v3.seeds
-              };
-            };
-          }
-          ;
-          throw new Error("Failed pattern match at Game (line 99, column 50 - line 105, column 80): " + [v2.constructor.name]);
+        if (v1.value1 instanceof Nothing) {
+          return pure2({
+            land,
+            seeds: seeds2
+          });
         }
         ;
-        if (v1 instanceof Just) {
+        if (v1.value0 instanceof Just && (v1.value0.value0.head instanceof Dirt && (v1.value0.value0.head.value0 instanceof Nothing && v1.value1 instanceof Just))) {
           return function __do5() {
-            var v22 = go2(v1.value0.tail)(seeds2)();
+            var plant$prime = plant(v1.value1.value0.head)();
+            var v2 = go2(v1.value0.value0.tail)(v1.value1.value0.tail)();
             return {
-              land: cons(v1.value0.head)(v22.land),
-              seeds: v22.seeds
+              land: cons(new Dirt(new Just(plant$prime)))(v2.land),
+              seeds: v2.seeds
             };
           };
         }
         ;
-        throw new Error("Failed pattern match at Game (line 96, column 25 - line 109, column 57): " + [v1.constructor.name]);
+        if (v1.value0 instanceof Just) {
+          return function __do5() {
+            var v2 = go2(v1.value0.value0.tail)(seeds2)();
+            return {
+              land: cons(v1.value0.value0.head)(v2.land),
+              seeds: v2.seeds
+            };
+          };
+        }
+        ;
+        throw new Error("Failed pattern match at Game (line 97, column 25 - line 106, column 57): " + [v1.constructor.name]);
       };
     };
     return function __do5() {
@@ -1391,8 +1386,8 @@
   var harvestPlants = function(v) {
     var harvested = mapMaybe(function(v1) {
       if (v1 instanceof Dirt && v1.value0 instanceof Just) {
-        var $100 = shouldHarvest(v1.value0.value0);
-        if ($100) {
+        var $106 = shouldHarvest(v1.value0.value0);
+        if ($106) {
           return new Just(v1.value0.value0);
         }
         ;
@@ -1412,8 +1407,8 @@
     return {
       land: map3(function(v2) {
         if (v2 instanceof Dirt && v2.value0 instanceof Just) {
-          var $112 = shouldHarvest(v2.value0.value0);
-          if ($112) {
+          var $118 = shouldHarvest(v2.value0.value0);
+          if ($118) {
             return new Dirt(Nothing.value);
           }
           ;
@@ -1432,8 +1427,8 @@
       var $tco_done = false;
       var $tco_result;
       function $tco_loop(v1) {
-        var $117 = v1.money < 10;
-        if ($117) {
+        var $123 = v1.money < 10;
+        if ($123) {
           $tco_done = true;
           return {
             acc: v1.acc,
@@ -1456,7 +1451,7 @@
           $copy_v1 = {
             acc: cons(new Dirt(Nothing.value))(v1.acc),
             land: v2.value0.tail,
-            money: v1.money - 10 | 0
+            money: v1.money - 100 | 0
           };
           return;
         }
@@ -1470,7 +1465,7 @@
           return;
         }
         ;
-        throw new Error("Failed pattern match at Game (line 121, column 18 - line 129, column 58): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 118, column 18 - line 126, column 58): " + [v2.constructor.name]);
       }
       ;
       while (!$tco_done) {
@@ -1504,7 +1499,7 @@
               return age(v2.value0);
             }
             ;
-            throw new Error("Failed pattern match at Game (line 56, column 17 - line 58, column 28): " + [v2.constructor.name]);
+            throw new Error("Failed pattern match at Game (line 57, column 17 - line 59, column 28): " + [v2.constructor.name]);
           })(l));
         });
       }(v.land),
