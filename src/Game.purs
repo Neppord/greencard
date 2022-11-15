@@ -111,16 +111,17 @@ clearGrass (Game game) = Game $ game
     , money = result.money
     }
     where
+        cost = 100
         result = go {acc: [], land: game.land, money: game.money}
         go {acc, land, money} =
-            if money < 10
+            if money < cost
             then {acc, land, money}
             else case uncons land of
                 Nothing -> {acc, land, money}
                 Just {head: Grass, tail} -> go
                     { acc: Dirt Nothing : acc
                     , land: tail
-                    , money: money - 100
+                    , money: money - cost
                     }
                 Just {head, tail} ->
                     go {acc: head:acc, land: tail, money}

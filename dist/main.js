@@ -1427,7 +1427,7 @@
       var $tco_done = false;
       var $tco_result;
       function $tco_loop(v1) {
-        var $123 = v1.money < 10;
+        var $123 = v1.money < 100;
         if ($123) {
           $tco_done = true;
           return {
@@ -1465,7 +1465,7 @@
           return;
         }
         ;
-        throw new Error("Failed pattern match at Game (line 118, column 18 - line 126, column 58): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 119, column 18 - line 127, column 58): " + [v2.constructor.name]);
       }
       ;
       while (!$tco_done) {
