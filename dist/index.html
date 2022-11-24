@@ -8,11 +8,12 @@
             --tile-size: 64px;
         }
         body {
+            image-rendering: pixelated;
             margin: 0;
         }
         .tile-map {
             display: grid;
-            background-image: url("images/grass.png");
+            background-image: url("images/grass_nogrow.png");
             background-size: var(--tile-size) var(--tile-size);
             background-repeat: repeat;
             grid-template-columns: repeat(16, var(--tile-size));
@@ -22,20 +23,20 @@
             background-size: var(--tile-size) var(--tile-size);
         }
         .tile-dirt {
-            background-image: url("images/ground.png");
+            background-image: url("images/soil_yesgrow.png");
         }
         .tile-seedling {
             background-image:
-                    url("images/seedling.png"),
-                    url("images/ground.png");
+                    url("images/flower1_sprout.png"),
+                    url("images/soil_yesgrow.png");
         }
         .tile-plant {
             background-image:
-                    url("images/plant.png"),
-                    url("images/ground.png");
+                    url("images/flower1_bud.png"),
+                    url("images/soil_yesgrow.png");
         }
         .tile-grass {
-            background-image: url("images/grass.png");
+            background-image: url("images/grass_nogrow.png");
         }
         #stats {
             padding-left: 1em;
