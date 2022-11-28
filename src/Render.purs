@@ -27,69 +27,75 @@ import Web.HTML.Window (document) as HTML
 
 getHTMLDocument :: Effect HTMLDocument
 getHTMLDocument = do
-    window <- HTML.window
-    HTML.document window
+  window <- HTML.window
+  HTML.document window
 
 getDocument :: Effect Document
 getDocument = do
-    htmlDocument <- getHTMLDocument
-    pure $ HTML.toDocument htmlDocument
+  htmlDocument <- getHTMLDocument
+  pure $ HTML.toDocument htmlDocument
 
 getElementById :: String -> Effect (Maybe Element)
 getElementById id = do
-    document <- getHTMLDocument
-    DOM.getElementById id (HTML.toNonElementParentNode document)
+  document <- getHTMLDocument
+  DOM.getElementById id (HTML.toNonElementParentNode document)
 
 getElementsByClassName :: String -> Effect HTMLCollection
 getElementsByClassName className = do
-    document <- getDocument
-    DOM.getElementsByClassName className document
+  document <- getDocument
+  DOM.getElementsByClassName className document
 
 createTile :: Effect Element
 createTile = do
-    document <- getDocument
-    element <- DOM.createElement "div" (document)
-    DOM.setClassName "tile" element
-    pure element
+  document <- getDocument
+  element <- DOM.createElement "div" (document)
+  DOM.setClassName "tile" element
+  pure element
 
 addTiles :: Game -> Effect Unit
 addTiles (Game game) = do
-    map <- getElementById "map"
-    case DOM.toNode <$> map of
-        Nothing -> pure unit
-        Just mapNode -> for_ game.land \_ -> do
-            tile <- createTile
-            DOM.appendChild (DOM.toNode tile) mapNode
-    pure unit
+  map <- getElementById "map"
+  case DOM.toNode <$> map of
+    Nothing -> pure unit
+    Just mapNode -> for_ game.land \_ -> do
+      tile <- createTile
+      DOM.appendChild (DOM.toNode tile) mapNode
+  pure unit
 
 render :: Game -> Array Event -> Effect Unit
-render (Game {day, land, money, seeds}) ( _ :: (Array Event)) = do
-    dayElement <- getElementById "day"
-    case dayElement of
-        Nothing -> pure unit
-        Just element -> do
-            DOM.toNode element # setTextContent (show day)
-    moneyElement <- getElementById "money"
-    case moneyElement of
-        Nothing -> pure unit
-        Just element -> do
-            DOM.toNode element # setTextContent (show money)
-    seedsElement <- getElementById "seeds"
-    case seedsElement of
-        Nothing -> pure unit
-        Just element -> do
-            DOM.toNode element # setTextContent (show $ length seeds)
-    collection <- getElementsByClassName "tile"
-    elements <- toArray collection
-    void $ for_ (zip land elements) $ \ (Tuple field element) ->
-        element # DOM.setClassName case field of
-            Grass -> "tile tile-grass"
-            Dirt (Nothing) -> "tile tile-dirt"
-            Dirt (Just (Plant
-                { stats: (Stats {growth})
-                , seed: (Seed {daysToHarvest
+render (Game { day, land, money, seeds }) (_ :: (Array Event)) = do
+  dayElement <- getElementById "day"
+  case dayElement of
+    Nothing -> pure unit
+    Just element -> do
+      DOM.toNode element # setTextContent (show day)
+  moneyElement <- getElementById "money"
+  case moneyElement of
+    Nothing -> pure unit
+    Just element -> do
+      DOM.toNode element # setTextContent (show money)
+  seedsElement <- getElementById "seeds"
+  case seedsElement of
+    Nothing -> pure unit
+    Just element -> do
+      DOM.toNode element # setTextContent (show $ length seeds)
+  collection <- getElementsByClassName "tile"
+  elements <- toArray collection
+  void $ for_ (zip land elements) $ \(Tuple field element) ->
+    element # DOM.setClassName case field of
+      Grass -> "tile tile-grass"
+      Dirt (Nothing) -> "tile tile-dirt"
+      Dirt
+        ( Just
+            ( Plant
+                { stats: (Stats { growth })
+                , seed:
+                    ( Seed
+                        { daysToHarvest
+                        }
+                    )
                 }
-            )})) ->
-                if growth * 2 < daysToHarvest
-                then "tile tile-seedling"
-                else "tile tile-plant"
+            )
+        ) ->
+        if growth * 2 < daysToHarvest then "tile tile-seedling"
+        else "tile tile-plant"

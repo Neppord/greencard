@@ -1277,7 +1277,7 @@
       });
     }
     ;
-    throw new Error("Failed pattern match at Plants (line 36, column 17 - line 41, column 10): " + [v1.constructor.name]);
+    throw new Error("Failed pattern match at Plants (line 37, column 17 - line 42, column 6): " + [v1.constructor.name]);
   };
 
   // output/Game/index.js
@@ -1370,7 +1370,7 @@
           };
         }
         ;
-        throw new Error("Failed pattern match at Game (line 97, column 25 - line 106, column 57): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 105, column 19 - line 114, column 49): " + [v1.constructor.name]);
       };
     };
     return function __do5() {
@@ -1465,7 +1465,7 @@
           return;
         }
         ;
-        throw new Error("Failed pattern match at Game (line 119, column 18 - line 127, column 58): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 126, column 10 - line 134, column 50): " + [v2.constructor.name]);
       }
       ;
       while (!$tco_done) {
@@ -1499,7 +1499,7 @@
               return age(v2.value0);
             }
             ;
-            throw new Error("Failed pattern match at Game (line 57, column 17 - line 59, column 28): " + [v2.constructor.name]);
+            throw new Error("Failed pattern match at Game (line 67, column 19 - line 69, column 32): " + [v2.constructor.name]);
           })(l));
         });
       }(v.land),
@@ -1710,7 +1710,7 @@
             return setTextContent(show2(v.day))(toNode(dayElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 68, column 5 - line 71, column 59): " + [dayElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 68, column 3 - line 71, column 53): " + [dayElement.constructor.name]);
         })();
         var moneyElement = getElementById2("money")();
         (function() {
@@ -1722,7 +1722,7 @@
             return setTextContent(show2(v.money))(toNode(moneyElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 73, column 5 - line 76, column 61): " + [moneyElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 73, column 3 - line 76, column 55): " + [moneyElement.constructor.name]);
         })();
         var seedsElement = getElementById2("seeds")();
         (function() {
@@ -1734,7 +1734,7 @@
             return setTextContent(show2(length(v.seeds)))(toNode(seedsElement.value0))();
           }
           ;
-          throw new Error("Failed pattern match at Render (line 78, column 5 - line 81, column 70): " + [seedsElement.constructor.name]);
+          throw new Error("Failed pattern match at Render (line 78, column 3 - line 81, column 64): " + [seedsElement.constructor.name]);
         })();
         var collection = getElementsByClassName3("tile")();
         var elements = toArray(collection)();
@@ -1757,7 +1757,7 @@
               return "tile tile-plant";
             }
             ;
-            throw new Error("Failed pattern match at Render (line 85, column 36 - line 95, column 39): " + [v2.value0.constructor.name]);
+            throw new Error("Failed pattern match at Render (line 85, column 32 - line 101, column 31): " + [v2.value0.constructor.name]);
           }())(v2.value1);
         }))();
       };
@@ -1787,7 +1787,7 @@
           })();
         }
         ;
-        throw new Error("Failed pattern match at Render (line 58, column 5 - line 62, column 54): " + [v1.constructor.name]);
+        throw new Error("Failed pattern match at Render (line 58, column 3 - line 62, column 48): " + [v1.constructor.name]);
       })();
       return unit;
     };

@@ -8,49 +8,50 @@ import Data.Show.Generic (genericShow)
 import Stats (Stats(..))
 
 newtype Seed = Seed
-    { daysToHarvest :: Int
-    , genome :: Array Card
-    , stats :: Stats
-    }
+  { daysToHarvest :: Int
+  , genome :: Array Card
+  , stats :: Stats
+  }
+
 derive instance Eq Seed
 derive instance Generic Seed _
 instance Show Seed where
-    show = genericShow
+  show = genericShow
 
 baseSeed :: Seed
 baseSeed = Seed
-    { daysToHarvest: 6
-    , genome:
-        [ basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicSeeds
-        , basicSeeds
-        , basicPrice
-        , basicPrice
-        ]
-    , stats: Stats { growth: 0, price: 0, seeds: 0}
-    }
+  { daysToHarvest: 6
+  , genome:
+      [ basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicSeeds
+      , basicSeeds
+      , basicPrice
+      , basicPrice
+      ]
+  , stats: Stats { growth: 0, price: 0, seeds: 0 }
+  }
 
 weedSeed :: Seed
 weedSeed = Seed
-    { daysToHarvest: 6
-    , genome:
-        [ basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , basicGrowth
-        , weedCard
-        , weedCard
-        , basicPrice
-        , basicPrice
-        , basicPrice
-        , basicPrice
-        ]
-    , stats: Stats { growth: 0, price: 0, seeds: 0}
-    }
+  { daysToHarvest: 6
+  , genome:
+      [ basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , basicGrowth
+      , weedCard
+      , weedCard
+      , basicPrice
+      , basicPrice
+      , basicPrice
+      , basicPrice
+      ]
+  , stats: Stats { growth: 0, price: 0, seeds: 0 }
+  }

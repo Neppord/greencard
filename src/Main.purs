@@ -11,9 +11,9 @@ import Util (doEvery)
 
 main :: Effect Unit
 main = do
-    addTiles start
-    render start []
-    start # doEvery 500 \ game -> do
-      Tuple game' events <- runWriterT (tick game)
-      render game' events
-      pure game'
+  addTiles start
+  render start []
+  start # doEvery 500 \game -> do
+    Tuple game' events <- runWriterT (tick game)
+    render game' events
+    pure game'
