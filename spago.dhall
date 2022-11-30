@@ -17,6 +17,7 @@ to generate this file without the comments in this block.
   , "effect"
   , "foldable-traversable"
   , "js-timers"
+  , "lists"
   , "maybe"
   , "ordered-collections"
   , "prelude"

@@ -5,6 +5,8 @@ import Prelude
 import Data.Array (length, zip)
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
+import Data.Array as Array
+import Data.Map as Map
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Event (Event)
@@ -81,7 +83,7 @@ render (Game { day, land, money, seeds }) (_ :: (Array Event)) = do
       DOM.toNode element # setTextContent (show $ length seeds)
   collection <- getElementsByClassName "tile"
   elements <- toArray collection
-  void $ for_ (zip land elements) $ \(Tuple field element) ->
+  void $ for_ (zip (Map.values land # Array.fromFoldable) elements) $ \(Tuple field element) ->
     element # DOM.setClassName case field of
       Grass -> "tile tile-grass"
       Dirt -> "tile tile-dirt"
