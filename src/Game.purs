@@ -25,6 +25,8 @@ newtype Game = Game
   , seeds :: Array Seed
   , money :: Int
   , day :: Int
+  , width :: Int
+  , height :: Int
   }
 
 instance Show Game where
@@ -144,7 +146,12 @@ addOneDay (Game game) = Game game { day = game.day + 1 }
 start :: Game
 start = Game
   { day: 0
-  , land: replicate (16 * 16) Grass
+  , land: replicate (width * height) Grass
   , seeds: [ baseSeed, baseSeed, weedSeed, weedSeed ]
   , money: 400
+  , width
+  , height
   }
+  where
+    width = 16
+    height = 16
