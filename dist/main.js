@@ -164,10 +164,10 @@
   };
   var liftA1 = function(dictApplicative) {
     var apply2 = apply(dictApplicative.Apply0());
-    var pure1 = pure(dictApplicative);
+    var pure12 = pure(dictApplicative);
     return function(f) {
       return function(a) {
-        return apply2(pure1(f))(a);
+        return apply2(pure12(f))(a);
       };
     };
   };
@@ -202,11 +202,11 @@
     return dict.bind;
   };
   var composeKleisli = function(dictBind) {
-    var bind1 = bind(dictBind);
+    var bind12 = bind(dictBind);
     return function(f) {
       return function(g) {
         return function(a) {
-          return bind1(f(a))(g);
+          return bind12(f(a))(g);
         };
       };
     };
@@ -2958,9 +2958,14 @@
   var ordTuple2 = /* @__PURE__ */ ordTuple(ordInt)(ordInt);
   var bind2 = /* @__PURE__ */ bind(bindArray);
   var pure2 = /* @__PURE__ */ pure(applicativeArray);
+  var bindWriterT2 = /* @__PURE__ */ bindWriterT(semigroupArray)(bindEffect);
+  var bind1 = /* @__PURE__ */ bind(bindWriterT2);
+  var lift3 = /* @__PURE__ */ lift(/* @__PURE__ */ monadTransWriterT(monoidArray))(monadEffect);
   var fromFoldable3 = /* @__PURE__ */ fromFoldable(foldableSet);
   var filter5 = /* @__PURE__ */ filter3(ordTuple2);
-  var $$for3 = /* @__PURE__ */ $$for(applicativeEffect)(traversableArray);
+  var applicativeWriterT2 = /* @__PURE__ */ applicativeWriterT(monoidArray)(applicativeEffect);
+  var $$for3 = /* @__PURE__ */ $$for(applicativeWriterT2)(traversableArray);
+  var pure1 = /* @__PURE__ */ pure(applicativeWriterT2);
   var union2 = /* @__PURE__ */ union(ordTuple2);
   var unions2 = /* @__PURE__ */ unions(ordTuple2)(foldableArray);
   var fromFoldable1 = /* @__PURE__ */ fromFoldable(foldableList);
@@ -2972,10 +2977,7 @@
   var div2 = /* @__PURE__ */ div(euclideanRingInt);
   var update2 = /* @__PURE__ */ update(ordTuple2);
   var mod2 = /* @__PURE__ */ mod(euclideanRingInt);
-  var bind22 = /* @__PURE__ */ bind(/* @__PURE__ */ bindWriterT(semigroupArray)(bindEffect));
-  var lift3 = /* @__PURE__ */ lift(/* @__PURE__ */ monadTransWriterT(monoidArray))(monadEffect);
-  var composeKleisli2 = /* @__PURE__ */ composeKleisli(bindEffect);
-  var pure22 = /* @__PURE__ */ pure(/* @__PURE__ */ applicativeWriterT(monoidArray)(applicativeEffect));
+  var composeKleisli2 = /* @__PURE__ */ composeKleisli(bindWriterT2);
   var Grass = /* @__PURE__ */ function() {
     function Grass2() {
     }
@@ -3036,33 +3038,33 @@
     height: 16
   };
   var plantSeeds = function(v) {
-    return function __do5() {
-      var dirtPositions = shuffle(fromFoldable3(keys2(filter5(function(v1) {
-        return eq4(v1)(Dirt.value);
-      })(v.land))))();
-      var seeds2 = shuffle(v.seeds)();
-      var pairs = zip(dirtPositions)(seeds2);
-      var maps = $$for3(pairs)(function(v1) {
-        return function __do6() {
-          var p = plant(v1.value1)();
-          return singleton4(v1.value0)(new Planting(p));
-        };
-      })();
-      return {
-        land: union2(unions2(maps))(v.land),
-        seeds: drop(length(pairs))(seeds2),
-        money: v.money,
-        day: v.day,
-        width: v.width,
-        height: v.height
-      };
-    };
+    return bind1(lift3(shuffle(fromFoldable3(keys2(filter5(function(v1) {
+      return eq4(v1)(Dirt.value);
+    })(v.land))))))(function(dirtPositions) {
+      return bind1(lift3(shuffle(v.seeds)))(function(seeds2) {
+        var pairs = zip(dirtPositions)(seeds2);
+        return bind1($$for3(pairs)(function(v1) {
+          return bind1(lift3(plant(v1.value1)))(function(p) {
+            return pure1(singleton4(v1.value0)(new Planting(p)));
+          });
+        }))(function(maps) {
+          return pure1({
+            land: union2(unions2(maps))(v.land),
+            seeds: drop(length(pairs))(seeds2),
+            money: v.money,
+            day: v.day,
+            width: v.width,
+            height: v.height
+          });
+        });
+      });
+    });
   };
   var harvestPlants = function(v) {
     var harvested = mapMaybe(function(v1) {
       if (v1 instanceof Planting) {
-        var $94 = shouldHarvest(v1.value0);
-        if ($94) {
+        var $92 = shouldHarvest(v1.value0);
+        if ($92) {
           return new Just(v1.value0);
         }
         ;
@@ -3079,11 +3081,11 @@
     var seeds$prime = bind2(harvested)(function(v1) {
       return replicate(v1.stats.seeds)(v1.seed);
     });
-    return {
+    return pure1({
       land: map1(function(v2) {
         if (v2 instanceof Planting) {
-          var $105 = shouldHarvest(v2.value0);
-          if ($105) {
+          var $103 = shouldHarvest(v2.value0);
+          if ($103) {
             return Dirt.value;
           }
           ;
@@ -3097,15 +3099,14 @@
       day: v.day,
       width: v.width,
       height: v.height
-    };
+    });
   };
   var cost = 100;
   var clearGrass = function(v) {
-    return function __do5() {
-      var cordsToClear = map22(take(div2(v.money)(cost)))(shuffle(fromFoldable3(keys2(filter5(function(v1) {
-        return eq4(v1)(Dirt.value);
-      })(v.land)))))();
-      return {
+    return bind1(lift3(map22(take(div2(v.money)(cost)))(shuffle(fromFoldable3(keys2(filter5(function(v1) {
+      return eq4(v1)(Dirt.value);
+    })(v.land)))))))(function(cordsToClear) {
+      return pure1({
         land: foldr2(update2(function(v2) {
           return new Just(Dirt.value);
         }))(v.land)(cordsToClear),
@@ -3114,11 +3115,11 @@
         day: v.day,
         width: v.width,
         height: v.height
-      };
-    };
+      });
+    });
   };
   var agePlants = function(v) {
-    return {
+    return pure1({
       land: map1(function(v2) {
         if (v2 instanceof Dirt) {
           return Dirt.value;
@@ -3138,33 +3139,29 @@
             return new Planting(v3.value0);
           }
           ;
-          throw new Error("Failed pattern match at Game (line 80, column 25 - line 82, column 35): " + [v3.constructor.name]);
+          throw new Error("Failed pattern match at Game (line 81, column 29 - line 83, column 39): " + [v3.constructor.name]);
         }
         ;
-        throw new Error("Failed pattern match at Game (line 77, column 13 - line 82, column 35): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 78, column 17 - line 83, column 39): " + [v2.constructor.name]);
       })(v.land),
       seeds: v.seeds,
       money: v.money,
       day: v.day,
       width: v.width,
       height: v.height
-    };
+    });
   };
   var addOneDay = function(v) {
-    return {
+    return pure1({
       land: v.land,
       seeds: v.seeds,
       money: v.money,
       day: v.day + 1 | 0,
       width: v.width,
       height: v.height
-    };
-  };
-  var tick = function(game) {
-    return bind22(lift3(composeKleisli2(plantSeeds)(clearGrass)(addOneDay(game))))(function(game$prime) {
-      return pure22(harvestPlants(agePlants(game$prime)));
     });
   };
+  var tick = /* @__PURE__ */ composeKleisli2(addOneDay)(/* @__PURE__ */ composeKleisli2(clearGrass)(/* @__PURE__ */ composeKleisli2(plantSeeds)(/* @__PURE__ */ composeKleisli2(agePlants)(harvestPlants))));
 
   // output/Web.DOM.Document/foreign.js
   var getEffProp = function(name15) {

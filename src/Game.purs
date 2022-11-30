@@ -71,28 +71,30 @@ instance Show Game where
           _ -> false
       # List.length
 
-agePlants :: Game -> Game
-agePlants (Game game) = Game $ game
-  { land = game.land
-      # map case _ of
-          Dirt -> Dirt
-          Grass -> Grass
-          Planting p -> case age p of
-            Nothing -> Dirt
-            Just p' -> Planting p'
-  }
+agePlants :: Game -> AppM Game
+agePlants (Game game) = do
+    pure $ Game $ game
+      { land = game.land
+          # map case _ of
+              Dirt -> Dirt
+              Grass -> Grass
+              Planting p -> case age p of
+                Nothing -> Dirt
+                Just p' -> Planting p'
+      }
 
-harvestPlants :: Game -> Game
-harvestPlants (Game game) = Game $ game
-  { land = game.land
-      # map case _ of
-          Planting p ->
-            if shouldHarvest p then Dirt
-            else Planting p
-          x -> x
-  , money = game.money + revenue
-  , seeds = game.seeds <> seeds'
-  }
+harvestPlants :: Game -> AppM Game
+harvestPlants (Game game) = do
+  pure $ Game $ game
+      { land = game.land
+          # map case _ of
+              Planting p ->
+                if shouldHarvest p then Dirt
+                else Planting p
+              x -> x
+      , money = game.money + revenue
+      , seeds = game.seeds <> seeds'
+      }
   where
   harvested = game.land
     # Map.values
@@ -110,17 +112,18 @@ harvestPlants (Game game) = Game $ game
     (Plant { seed, stats: (Stats { seeds }) }) <- harvested
     replicate seeds seed
 
-plantSeeds :: Game -> Effect Game
+plantSeeds :: Game -> AppM Game
 plantSeeds (Game game) = do
   dirtPositions <- game.land
     # Map.filter (_ == Dirt)
     # Map.keys
     # Array.fromFoldable
     # shuffle
-  seeds <- game.seeds # shuffle
+    # lift
+  seeds <- game.seeds # shuffle # lift
   let pairs = (Array.zip dirtPositions seeds)
   maps <- for pairs \(Tuple cord seed) -> do
-    p <- plant seed
+    p <- plant seed # lift
     pure $ Map.singleton cord (Planting p)
   pure $ Game $ game
     { land = Map.union (Map.unions maps) game.land
@@ -130,7 +133,7 @@ plantSeeds (Game game) = do
 cost :: Int
 cost = 100
 
-clearGrass :: Game -> Effect Game
+clearGrass :: Game -> AppM Game
 clearGrass (Game game) = do
   cordsToClear <- game.land
     # Map.filter (_ == Dirt)
@@ -138,18 +141,23 @@ clearGrass (Game game) = do
     # Array.fromFoldable
     # shuffle
     # map (Array.take (game.money / cost))
+    # lift
   pure $ Game $ game
     { land = Array.foldr (Map.update (\_ -> Just Dirt)) game.land cordsToClear
     , money = game.money `mod` cost
     }
 
 tick :: Game -> AppM Game
-tick game = do
-  game' <- lift $ plantSeeds >=> clearGrass $ addOneDay game
-  pure $ harvestPlants $ agePlants game'
+tick =
+  addOneDay
+  >=> clearGrass
+  >=> plantSeeds
+  >=> agePlants
+  >=> harvestPlants
 
-addOneDay :: Game -> Game
-addOneDay (Game game) = Game game { day = game.day + 1 }
+addOneDay :: Game -> AppM Game
+addOneDay (Game game) = do
+    pure $ Game game { day = game.day + 1 }
 
 start :: Game
 start = Game
