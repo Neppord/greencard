@@ -84,18 +84,12 @@ render (Game { day, land, money, seeds }) (_ :: (Array Event)) = do
   void $ for_ (zip land elements) $ \(Tuple field element) ->
     element # DOM.setClassName case field of
       Grass -> "tile tile-grass"
-      Dirt (Nothing) -> "tile tile-dirt"
-      Dirt
-        ( Just
-            ( Plant
-                { stats: (Stats { growth })
-                , seed:
-                    ( Seed
-                        { daysToHarvest
-                        }
-                    )
-                }
-            )
+      Dirt -> "tile tile-dirt"
+      Planting
+        ( Plant
+            { stats: (Stats { growth })
+            , seed: (Seed { daysToHarvest })
+            }
         ) ->
         if growth * 2 < daysToHarvest then "tile tile-seedling"
         else "tile tile-plant"

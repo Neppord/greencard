@@ -12,13 +12,16 @@ import Stats (Stats(..))
 import AppM (AppM)
 import Control.Monad.Trans.Class (lift)
 import Data.Tuple (Tuple(..))
+import Data.Map.Internal (Map)
 
-data Land a = Grass | Dirt a
+data Land a = Grass | Dirt | Planting a
 
 derive instance Functor Land
 derive instance Eq a => Eq (Land a)
 
-type Field = Array (Land (Maybe Plant))
+type Field = Array (Land Plant)
+type Coordinate = Tuple Int Int
+type MapField = Map Coordinate (Land Plant)
 
 newtype Game = Game
   { land :: Field
@@ -51,34 +54,33 @@ instance Show Game where
       # length
     plants = game.land
       # filter case _ of
-          Dirt (Just _) -> true
+          Planting _ -> true
           _ -> false
       # length
     free = game.land
       # filter case _ of
-          Dirt Nothing -> true
+          Dirt -> true
           _ -> false
       # length
 
 agePlants :: Game -> Game
 agePlants (Game game) = Game $ game
   { land = game.land
-      # \land -> do
-          l <- land
-          l
-            # map case _ of
-                Nothing -> Nothing
-                Just p -> age p
-            # pure
+      # map case _ of
+          Dirt -> Dirt
+          Grass -> Grass
+          Planting p -> case age p of
+            Nothing -> Dirt
+            Just p' -> Planting p'
   }
 
 harvestPlants :: Game -> Game
 harvestPlants (Game game) = Game $ game
   { land = game.land
       # map case _ of
-          Dirt (Just p) ->
-            if shouldHarvest p then Dirt Nothing
-            else Dirt (Just p)
+          Planting p ->
+            if shouldHarvest p then Dirt
+            else Planting p
           x -> x
   , money = game.money + revenue
   , seeds = game.seeds <> seeds'
@@ -86,7 +88,7 @@ harvestPlants (Game game) = Game $ game
   where
   harvested = game.land
     # mapMaybe case _ of
-        Dirt (Just p) ->
+        Planting p ->
           if shouldHarvest p then Just p
           else Nothing
         _ -> Nothing
@@ -107,10 +109,10 @@ plantSeeds (Game game) = do
   go land seeds = case Tuple (uncons land) (uncons seeds) of
     Tuple Nothing _ -> pure { land, seeds } -- no land left
     Tuple _ Nothing -> pure { land, seeds } -- no seeds left
-    Tuple (Just { head: Dirt (Nothing), tail }) (Just { head: seed, tail: seedTail }) -> do
+    Tuple (Just { head: Dirt, tail }) (Just { head: seed, tail: seedTail }) -> do
       plant' <- plant seed
       { land: land', seeds: seeds' } <- go tail seedTail
-      pure $ { land: (Dirt (Just plant')) : land', seeds: seeds' }
+      pure $ { land: Planting plant' : land', seeds: seeds' }
     Tuple (Just { head, tail }) _ -> do -- can't plant in this land
       { land: land', seeds: seeds' } <- go tail seeds
       pure { land: head : land', seeds: seeds' }
@@ -128,7 +130,7 @@ clearGrass (Game game) = Game $ game
     else case uncons land of
       Nothing -> { acc, land, money }
       Just { head: Grass, tail } -> go
-        { acc: Dirt Nothing : acc
+        { acc: Dirt : acc
         , land: tail
         , money: money - cost
         }
@@ -153,5 +155,5 @@ start = Game
   , height
   }
   where
-    width = 16
-    height = 16
+  width = 16
+  height = 16
