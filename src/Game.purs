@@ -12,13 +12,13 @@ import Data.Map (Map, values)
 import Data.Map as Map
 import Data.Map.Internal (fromFoldable)
 import Data.Maybe (Maybe(..))
+import Data.Traversable (for)
 import Data.Tuple (Tuple(..))
-import Effect (Effect)
+import Effect.Console (log)
 import Plants (Plant(..), age, plant, shouldHarvest)
 import Seeds (Seed, baseSeed, weedSeed)
 import Stats (Stats(..))
 import Util (shuffle)
-import Data.Traversable (for)
 
 data Land a = Grass | Dirt | Planting a
 
@@ -73,28 +73,28 @@ instance Show Game where
 
 agePlants :: Game -> AppM Game
 agePlants (Game game) = do
-    pure $ Game $ game
-      { land = game.land
-          # map case _ of
-              Dirt -> Dirt
-              Grass -> Grass
-              Planting p -> case age p of
-                Nothing -> Dirt
-                Just p' -> Planting p'
-      }
+  pure $ Game $ game
+    { land = game.land
+        # map case _ of
+            Dirt -> Dirt
+            Grass -> Grass
+            Planting p -> case age p of
+              Nothing -> Dirt
+              Just p' -> Planting p'
+    }
 
 harvestPlants :: Game -> AppM Game
 harvestPlants (Game game) = do
   pure $ Game $ game
-      { land = game.land
-          # map case _ of
-              Planting p ->
-                if shouldHarvest p then Dirt
-                else Planting p
-              x -> x
-      , money = game.money + revenue
-      , seeds = game.seeds <> seeds'
-      }
+    { land = game.land
+        # map case _ of
+            Planting p ->
+              if shouldHarvest p then Dirt
+              else Planting p
+            x -> x
+    , money = game.money + revenue
+    , seeds = game.seeds <> seeds'
+    }
   where
   harvested = game.land
     # Map.values
@@ -135,29 +135,30 @@ cost = 100
 
 clearGrass :: Game -> AppM Game
 clearGrass (Game game) = do
+  let times = game.money / cost
   cordsToClear <- game.land
-    # Map.filter (_ == Dirt)
+    # Map.filter (_ == Grass)
     # Map.keys
     # Array.fromFoldable
     # shuffle
-    # map (Array.take (game.money / cost))
+    # map (Array.take times)
     # lift
   pure $ Game $ game
     { land = Array.foldr (Map.update (\_ -> Just Dirt)) game.land cordsToClear
-    , money = game.money `mod` cost
+    , money = game.money - (cost * Array.length cordsToClear)
     }
 
 tick :: Game -> AppM Game
 tick =
   addOneDay
-  >=> clearGrass
-  >=> plantSeeds
-  >=> agePlants
-  >=> harvestPlants
+    >=> clearGrass
+    >=> plantSeeds
+    >=> agePlants
+    >=> harvestPlants
 
 addOneDay :: Game -> AppM Game
 addOneDay (Game game) = do
-    pure $ Game game { day = game.day + 1 }
+  pure $ Game game { day = game.day + 1 }
 
 start :: Game
 start = Game

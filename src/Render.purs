@@ -59,7 +59,7 @@ addTiles (Game game) = do
   map <- getElementById "map"
   case DOM.toNode <$> map of
     Nothing -> pure unit
-    Just mapNode -> for_ game.land \_ -> do
+    Just mapNode -> for_ (Map.values game.land) \_ -> do
       tile <- createTile
       DOM.appendChild (DOM.toNode tile) mapNode
   pure unit

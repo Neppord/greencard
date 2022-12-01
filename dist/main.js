@@ -592,9 +592,6 @@
   };
 
   // output/Data.EuclideanRing/index.js
-  var mod = function(dict) {
-    return dict.mod;
-  };
   var euclideanRingInt = {
     degree: intDegree,
     div: intDiv,
@@ -2973,10 +2970,9 @@
   var map4 = /* @__PURE__ */ map(functorArray);
   var map1 = /* @__PURE__ */ map(functorMap);
   var append1 = /* @__PURE__ */ append(semigroupArray);
-  var map22 = /* @__PURE__ */ map(functorEffect);
   var div2 = /* @__PURE__ */ div(euclideanRingInt);
+  var map22 = /* @__PURE__ */ map(functorEffect);
   var update2 = /* @__PURE__ */ update(ordTuple2);
-  var mod2 = /* @__PURE__ */ mod(euclideanRingInt);
   var composeKleisli2 = /* @__PURE__ */ composeKleisli(bindWriterT2);
   var Grass = /* @__PURE__ */ function() {
     function Grass2() {
@@ -3063,8 +3059,8 @@
   var harvestPlants = function(v) {
     var harvested = mapMaybe(function(v1) {
       if (v1 instanceof Planting) {
-        var $92 = shouldHarvest(v1.value0);
-        if ($92) {
+        var $93 = shouldHarvest(v1.value0);
+        if ($93) {
           return new Just(v1.value0);
         }
         ;
@@ -3084,8 +3080,8 @@
     return pure1({
       land: map1(function(v2) {
         if (v2 instanceof Planting) {
-          var $103 = shouldHarvest(v2.value0);
-          if ($103) {
+          var $104 = shouldHarvest(v2.value0);
+          if ($104) {
             return Dirt.value;
           }
           ;
@@ -3103,15 +3099,16 @@
   };
   var cost = 100;
   var clearGrass = function(v) {
-    return bind1(lift3(map22(take(div2(v.money)(cost)))(shuffle(fromFoldable3(keys2(filter5(function(v1) {
-      return eq4(v1)(Dirt.value);
+    var times = div2(v.money)(cost);
+    return bind1(lift3(map22(take(times))(shuffle(fromFoldable3(keys2(filter5(function(v1) {
+      return eq4(v1)(Grass.value);
     })(v.land)))))))(function(cordsToClear) {
       return pure1({
         land: foldr2(update2(function(v2) {
           return new Just(Dirt.value);
         }))(v.land)(cordsToClear),
         seeds: v.seeds,
-        money: mod2(v.money)(cost),
+        money: v.money - (cost * length(cordsToClear) | 0) | 0,
         day: v.day,
         width: v.width,
         height: v.height
@@ -3139,10 +3136,10 @@
             return new Planting(v3.value0);
           }
           ;
-          throw new Error("Failed pattern match at Game (line 81, column 29 - line 83, column 39): " + [v3.constructor.name]);
+          throw new Error("Failed pattern match at Game (line 81, column 27 - line 83, column 37): " + [v3.constructor.name]);
         }
         ;
-        throw new Error("Failed pattern match at Game (line 78, column 17 - line 83, column 39): " + [v2.constructor.name]);
+        throw new Error("Failed pattern match at Game (line 78, column 15 - line 83, column 37): " + [v2.constructor.name]);
       })(v.land),
       seeds: v.seeds,
       money: v.money,
@@ -3320,7 +3317,7 @@
   var for_1 = /* @__PURE__ */ for_2(foldableArray);
   var fromFoldable4 = /* @__PURE__ */ fromFoldable(foldableList);
   var map6 = /* @__PURE__ */ map(functorMaybe);
-  var for_22 = /* @__PURE__ */ for_2(foldableMap);
+  var for_22 = /* @__PURE__ */ for_2(foldableList);
   var getHTMLDocument = function __do() {
     var window2 = windowImpl();
     return document(window2)();
@@ -3423,7 +3420,7 @@
         }
         ;
         if (v1 instanceof Just) {
-          return for_22(v.land)(function(v2) {
+          return for_22(values(v.land))(function(v2) {
             return function __do6() {
               var tile = createTile();
               return appendChild(toNode(tile))(v1.value0)();
