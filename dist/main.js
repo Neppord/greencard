@@ -89,6 +89,11 @@
   };
 
   // output/Data.Semigroup/foreign.js
+  var concatString = function(s1) {
+    return function(s2) {
+      return s1 + s2;
+    };
+  };
   var concatArray = function(xs) {
     return function(ys) {
       if (xs.length === 0)
@@ -132,6 +137,9 @@
         return unit;
       };
     }
+  };
+  var semigroupString = {
+    append: concatString
   };
   var semigroupArray = {
     append: concatArray
@@ -762,6 +770,12 @@
     mempty: unit,
     Semigroup0: function() {
       return semigroupUnit;
+    }
+  };
+  var monoidString = {
+    mempty: "",
+    Semigroup0: function() {
+      return semigroupString;
     }
   };
   var monoidArray = {
@@ -1573,6 +1587,36 @@
   var foldl = function(dict) {
     return dict.foldl;
   };
+  var intercalate = function(dictFoldable) {
+    var foldl22 = foldl(dictFoldable);
+    return function(dictMonoid) {
+      var append5 = append(dictMonoid.Semigroup0());
+      var mempty4 = mempty(dictMonoid);
+      return function(sep) {
+        return function(xs) {
+          var go2 = function(v) {
+            return function(v1) {
+              if (v.init) {
+                return {
+                  init: false,
+                  acc: v1
+                };
+              }
+              ;
+              return {
+                init: false,
+                acc: append5(v.acc)(append5(sep)(v1))
+              };
+            };
+          };
+          return foldl22(go2)({
+            init: true,
+            acc: mempty4
+          })(xs).acc;
+        };
+      };
+    };
+  };
   var sum = function(dictFoldable) {
     var foldl22 = foldl(dictFoldable);
     return function(dictSemiring) {
@@ -1806,6 +1850,7 @@
   };
 
   // output/Data.Array/index.js
+  var intercalate1 = /* @__PURE__ */ intercalate(foldableArray);
   var fromJust4 = /* @__PURE__ */ fromJust();
   var zip = /* @__PURE__ */ function() {
     return zipWith(Tuple.create);
@@ -1860,6 +1905,9 @@
     return function(xs) {
       return zipWith(f2)(range(0)(length(xs) - 1 | 0))(xs);
     };
+  };
+  var intercalate2 = function(dictMonoid) {
+    return intercalate1(dictMonoid);
   };
   var index = /* @__PURE__ */ function() {
     return indexImpl(Just.create)(Nothing.value);
@@ -5197,6 +5245,44 @@
     };
   };
 
+  // output/Deku.DOM.Attr.AttributeName/index.js
+  var AttributeName = /* @__PURE__ */ function() {
+    function AttributeName2() {
+    }
+    ;
+    AttributeName2.value = new AttributeName2();
+    return AttributeName2;
+  }();
+  var attrAnimate_AttributeName = {
+    attr: function(v) {
+      return function(value12) {
+        return unsafeAttribute({
+          key: "attributeName",
+          value: prop$prime(value12)
+        });
+      };
+    }
+  };
+
+  // output/Deku.DOM.Attr.Dur/index.js
+  var Dur = /* @__PURE__ */ function() {
+    function Dur2() {
+    }
+    ;
+    Dur2.value = new Dur2();
+    return Dur2;
+  }();
+  var attrAnimate_DurString = {
+    attr: function(v) {
+      return function(value12) {
+        return unsafeAttribute({
+          key: "dur",
+          value: prop$prime(value12)
+        });
+      };
+    }
+  };
+
   // output/Deku.DOM.Attr.Height/index.js
   var Height = /* @__PURE__ */ function() {
     function Height2() {
@@ -5210,6 +5296,25 @@
       return function(value12) {
         return unsafeAttribute({
           key: "height",
+          value: prop$prime(value12)
+        });
+      };
+    }
+  };
+
+  // output/Deku.DOM.Attr.Values/index.js
+  var Values = /* @__PURE__ */ function() {
+    function Values2() {
+    }
+    ;
+    Values2.value = new Values2();
+    return Values2;
+  }();
+  var attrAnimate_ValuesString = {
+    attr: function(v) {
+      return function(value12) {
+        return unsafeAttribute({
+          key: "values",
           value: prop$prime(value12)
         });
       };
@@ -5283,35 +5388,43 @@
     }
   };
 
-  // output/Deku.DOM.Elt.Image/index.js
+  // output/Deku.DOM.Elt.Animate/index.js
   var coerce5 = /* @__PURE__ */ coerce();
+  var animate = function(attributes) {
+    return function(kids) {
+      return new Element$prime(elementify("animate")(attributes)(coerce5(fixed(coerce5(mapWithIndex(unsafeSetPos)(kids))))));
+    };
+  };
+
+  // output/Deku.DOM.Elt.Image/index.js
+  var coerce6 = /* @__PURE__ */ coerce();
   var image = function(attributes) {
     return function(kids) {
-      return new Element$prime(elementify("image")(attributes)(coerce5(fixed(coerce5(mapWithIndex(unsafeSetPos)(kids))))));
+      return new Element$prime(elementify("image")(attributes)(coerce6(fixed(coerce6(mapWithIndex(unsafeSetPos)(kids))))));
     };
   };
 
   // output/Deku.DOM.Elt.P/index.js
-  var coerce6 = /* @__PURE__ */ coerce();
+  var coerce7 = /* @__PURE__ */ coerce();
   var p = function(attributes) {
     return function(kids) {
-      return new Element$prime(elementify("p")(attributes)(coerce6(fixed(coerce6(mapWithIndex(unsafeSetPos)(kids))))));
+      return new Element$prime(elementify("p")(attributes)(coerce7(fixed(coerce7(mapWithIndex(unsafeSetPos)(kids))))));
     };
   };
 
   // output/Deku.DOM.Elt.Span/index.js
-  var coerce7 = /* @__PURE__ */ coerce();
+  var coerce8 = /* @__PURE__ */ coerce();
   var span = function(attributes) {
     return function(kids) {
-      return new Element$prime(elementify("span")(attributes)(coerce7(fixed(coerce7(mapWithIndex(unsafeSetPos)(kids))))));
+      return new Element$prime(elementify("span")(attributes)(coerce8(fixed(coerce8(mapWithIndex(unsafeSetPos)(kids))))));
     };
   };
 
   // output/Deku.DOM.Elt.Svg/index.js
-  var coerce8 = /* @__PURE__ */ coerce();
+  var coerce9 = /* @__PURE__ */ coerce();
   var svg = function(attributes) {
     return function(kids) {
-      return new Element$prime(elementify("svg")(attributes)(coerce8(fixed(coerce8(mapWithIndex(unsafeSetPos)(kids))))));
+      return new Element$prime(elementify("svg")(attributes)(coerce9(fixed(coerce9(mapWithIndex(unsafeSetPos)(kids))))));
     };
   };
 
@@ -6793,13 +6906,17 @@
   var pureAttr22 = /* @__PURE__ */ pureAttr(attrImage_HrefString);
   var div3 = /* @__PURE__ */ div(euclideanRingInt);
   var pureAttr3 = /* @__PURE__ */ pureAttr(attrImage_WidthString);
-  var mapFlipped4 = /* @__PURE__ */ mapFlipped(functorEffect);
+  var pureAttr4 = /* @__PURE__ */ pureAttr(attrAnimate_AttributeName);
+  var pureAttr5 = /* @__PURE__ */ pureAttr(attrAnimate_ValuesString);
+  var intercalate5 = /* @__PURE__ */ intercalate2(monoidString);
+  var mapFlipped4 = /* @__PURE__ */ mapFlipped(functorArray);
+  var pureAttr6 = /* @__PURE__ */ pureAttr(attrAnimate_DurString);
+  var mapFlipped1 = /* @__PURE__ */ mapFlipped(functorEffect);
   var id_2 = /* @__PURE__ */ id_(attrP_IdString);
   var id_1 = /* @__PURE__ */ id_(attrSpan_IdString);
-  var pureAttr4 = /* @__PURE__ */ pureAttr(attrSvg_WidthString);
-  var pureAttr5 = /* @__PURE__ */ pureAttr(attrSvg_HeightString);
-  var pureAttr6 = /* @__PURE__ */ pureAttr(attrSvg_StyleString);
-  var mapFlipped1 = /* @__PURE__ */ mapFlipped(functorArray);
+  var pureAttr7 = /* @__PURE__ */ pureAttr(attrSvg_WidthString);
+  var pureAttr8 = /* @__PURE__ */ pureAttr(attrSvg_HeightString);
+  var pureAttr9 = /* @__PURE__ */ pureAttr(attrSvg_StyleString);
   var toUnfoldable4 = /* @__PURE__ */ toUnfoldable(unfoldableArray);
   var f = function(v) {
     if (v.value1 instanceof Dirt) {
@@ -6818,11 +6935,15 @@
       if (v.value1.value0.stats.growth > div3(2 * v.value1.value0.daysToHarvest | 0)(3)) {
         return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
           return discard3(pureAttr1(Y.value)(show3((v.value0.value1 * 32 | 0) - 32 | 0)))(function() {
-            return discard3(pureAttr3(Width.value)("32"))(function() {
-              return pureAttr22(Href.value)("images/flower1_still1.png");
-            });
+            return pureAttr3(Width.value)("32");
           });
-        }))([]);
+        }))([animate(discard3(pureAttr4(AttributeName.value)("href"))(function() {
+          return discard3(pureAttr5(Values.value)(intercalate5("; ")(mapFlipped4(mapFlipped4(range(1)(9))(show3))(function(n) {
+            return "images/flower1_still" + (n + ".png");
+          }))))(function() {
+            return pureAttr6(Dur.value)("0.5s");
+          });
+        }))([])]);
       }
       ;
       if (v.value1.value0.stats.growth > div3(v.value1.value0.daysToHarvest)(3)) {
@@ -6847,20 +6968,20 @@
       ;
     }
     ;
-    throw new Error("Failed pattern match at Main (line 26, column 27 - line 55, column 11): " + [v.value1.constructor.name]);
+    throw new Error("Failed pattern match at Main (line 27, column 27 - line 64, column 11): " + [v.value1.constructor.name]);
   };
   var main = /* @__PURE__ */ runInBody(/* @__PURE__ */ function() {
     var v = foldE(function(s) {
       return function(v1) {
-        return mapFlipped4(runWriterT(tick(s)))(fst);
+        return mapFlipped1(runWriterT(tick(s)))(fst);
       };
     })(start2)(interval(500));
     return switcherFlipped(v)(function(v1) {
-      return fixed2([p(id_2("stats"))([text_("Day: "), span(id_1("day"))([text_(show3(v1.day))]), text_("Money: "), span(id_1("money"))([text_(show3(v1.money))]), text_("Seeds: "), span(id_1("seeds"))([text_(show3(length(v1.seeds)))])]), svg(discard3(pureAttr4(Width.value)("100vw"))(function() {
-        return discard3(pureAttr5(Height.value)("100vh"))(function() {
-          return pureAttr6(Style.value)("background: url('images/soil_yesgrow.png') repeat");
+      return fixed2([p(id_2("stats"))([text_("Day: "), span(id_1("day"))([text_(show3(v1.day))]), text_("Money: "), span(id_1("money"))([text_(show3(v1.money))]), text_("Seeds: "), span(id_1("seeds"))([text_(show3(length(v1.seeds)))])]), svg(discard3(pureAttr7(Width.value)("100vw"))(function() {
+        return discard3(pureAttr8(Height.value)("100vh"))(function() {
+          return pureAttr9(Style.value)("background: url('images/soil_yesgrow.png') repeat");
         });
-      }))(mapFlipped1(toUnfoldable4(v1.land))(f))]);
+      }))(mapFlipped4(toUnfoldable4(v1.land))(f))]);
     });
   }());
 

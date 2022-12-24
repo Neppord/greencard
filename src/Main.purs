@@ -21,6 +21,7 @@ import Game (Game(..), Land(..), start, tick)
 import QualifiedDo.Alt as Alt
 import Plants (Plant(..))
 import Stats (Stats(..))
+import Data.Array (intercalate, (..))
 
 f :: Tuple (Tuple Int Int) (Land Plant) -> Nut
 f (Tuple (x /\ y) land) = case land of
@@ -37,8 +38,16 @@ f (Tuple (x /\ y) land) = case land of
           D.X !:= show (x * 32)
           D.Y !:= show (y * 32 - 32)
           D.Width !:= "32"
-          D.Href !:= "images/flower1_still1.png"
-        []
+        [ D.animate
+            Alt.do
+                D.AttributeName !:= "href"
+                D.Values !:= (1..9
+                    <#> show
+                    <#> (\n -> "images/flower1_still" <> n <> ".png")
+                    # intercalate "; ")
+                D.Dur !:= "0.5s"
+            []
+        ]
     | growth > daysToHarvest / 3 -> D.image
         Alt.do
           D.X !:= show (x * 32)
