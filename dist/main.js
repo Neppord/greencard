@@ -4327,6 +4327,25 @@
     }
   };
 
+  // output/Deku.DOM.Attr.Style/index.js
+  var Style = /* @__PURE__ */ function() {
+    function Style2() {
+    }
+    ;
+    Style2.value = new Style2();
+    return Style2;
+  }();
+  var attrSvg_StyleString = {
+    attr: function(v) {
+      return function(value12) {
+        return unsafeAttribute({
+          key: "style",
+          value: prop$prime(value12)
+        });
+      };
+    }
+  };
+
   // output/Deku.Attributes/index.js
   var mapFlipped2 = /* @__PURE__ */ mapFlipped(functorEvent);
   var pure5 = /* @__PURE__ */ pure(applicativeEvent);
@@ -5206,6 +5225,16 @@
     return Width2;
   }();
   var attrSvg_WidthString = {
+    attr: function(v) {
+      return function(value12) {
+        return unsafeAttribute({
+          key: "width",
+          value: prop$prime(value12)
+        });
+      };
+    }
+  };
+  var attrImage_WidthString = {
     attr: function(v) {
       return function(value12) {
         return unsafeAttribute({
@@ -6762,33 +6791,63 @@
   var show3 = /* @__PURE__ */ show(showInt);
   var pureAttr1 = /* @__PURE__ */ pureAttr(attrImage_YString);
   var pureAttr22 = /* @__PURE__ */ pureAttr(attrImage_HrefString);
+  var div3 = /* @__PURE__ */ div(euclideanRingInt);
+  var pureAttr3 = /* @__PURE__ */ pureAttr(attrImage_WidthString);
   var mapFlipped4 = /* @__PURE__ */ mapFlipped(functorEffect);
   var id_2 = /* @__PURE__ */ id_(attrP_IdString);
   var id_1 = /* @__PURE__ */ id_(attrSpan_IdString);
-  var pureAttr3 = /* @__PURE__ */ pureAttr(attrSvg_WidthString);
-  var pureAttr4 = /* @__PURE__ */ pureAttr(attrSvg_HeightString);
+  var pureAttr4 = /* @__PURE__ */ pureAttr(attrSvg_WidthString);
+  var pureAttr5 = /* @__PURE__ */ pureAttr(attrSvg_HeightString);
+  var pureAttr6 = /* @__PURE__ */ pureAttr(attrSvg_StyleString);
   var mapFlipped1 = /* @__PURE__ */ mapFlipped(functorArray);
   var toUnfoldable4 = /* @__PURE__ */ toUnfoldable(unfoldableArray);
   var f = function(v) {
-    return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
-      return discard3(pureAttr1(Y.value)(show3(v.value0.value1 * 32 | 0)))(function() {
-        return pureAttr22(Href.value)(function() {
-          if (v.value1 instanceof Grass) {
-            return "images/grass_nogrow.png";
-          }
-          ;
-          if (v.value1 instanceof Dirt) {
-            return "images/soil_yesgrow.png";
-          }
-          ;
-          if (v.value1 instanceof Planting) {
-            return "images/flower1_sprout.png";
-          }
-          ;
-          throw new Error("Failed pattern match at Main (line 30, column 18 - line 33, column 50): " + [v.value1.constructor.name]);
-        }());
-      });
-    }))([]);
+    if (v.value1 instanceof Dirt) {
+      return fixed2([]);
+    }
+    ;
+    if (v.value1 instanceof Grass) {
+      return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
+        return discard3(pureAttr1(Y.value)(show3(v.value0.value1 * 32 | 0)))(function() {
+          return pureAttr22(Href.value)("images/grass_nogrow.png");
+        });
+      }))([]);
+    }
+    ;
+    if (v.value1 instanceof Planting) {
+      if (v.value1.value0.stats.growth > div3(2 * v.value1.value0.daysToHarvest | 0)(3)) {
+        return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
+          return discard3(pureAttr1(Y.value)(show3((v.value0.value1 * 32 | 0) - 32 | 0)))(function() {
+            return discard3(pureAttr3(Width.value)("32"))(function() {
+              return pureAttr22(Href.value)("images/flower1_still1.png");
+            });
+          });
+        }))([]);
+      }
+      ;
+      if (v.value1.value0.stats.growth > div3(v.value1.value0.daysToHarvest)(3)) {
+        return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
+          return discard3(pureAttr1(Y.value)(show3(v.value0.value1 * 32 | 0)))(function() {
+            return discard3(pureAttr3(Width.value)("32"))(function() {
+              return pureAttr22(Href.value)("images/flower1_bud.png");
+            });
+          });
+        }))([]);
+      }
+      ;
+      if (otherwise) {
+        return image(discard3(pureAttr2(X.value)(show3(v.value0.value0 * 32 | 0)))(function() {
+          return discard3(pureAttr1(Y.value)(show3(v.value0.value1 * 32 | 0)))(function() {
+            return discard3(pureAttr3(Width.value)("32"))(function() {
+              return pureAttr22(Href.value)("images/flower1_sprout.png");
+            });
+          });
+        }))([]);
+      }
+      ;
+    }
+    ;
+    throw new Error("Failed pattern match at Main (line 26, column 27 - line 55, column 11): " + [v.value1.constructor.name]);
   };
   var main = /* @__PURE__ */ runInBody(/* @__PURE__ */ function() {
     var v = foldE(function(s) {
@@ -6797,8 +6856,10 @@
       };
     })(start2)(interval(500));
     return switcherFlipped(v)(function(v1) {
-      return fixed2([p(id_2("stats"))([text_("Day: "), span(id_1("day"))([text_(show3(v1.day))]), text_("Money: "), span(id_1("money"))([text_(show3(v1.money))]), text_("Seeds: "), span(id_1("seeds"))([text_(show3(length(v1.seeds)))])]), svg(discard3(pureAttr3(Width.value)("100vw"))(function() {
-        return pureAttr4(Height.value)("100vh");
+      return fixed2([p(id_2("stats"))([text_("Day: "), span(id_1("day"))([text_(show3(v1.day))]), text_("Money: "), span(id_1("money"))([text_(show3(v1.money))]), text_("Seeds: "), span(id_1("seeds"))([text_(show3(length(v1.seeds)))])]), svg(discard3(pureAttr4(Width.value)("100vw"))(function() {
+        return discard3(pureAttr5(Height.value)("100vh"))(function() {
+          return pureAttr6(Style.value)("background: url('images/soil_yesgrow.png') repeat");
+        });
       }))(mapFlipped1(toUnfoldable4(v1.land))(f))]);
     });
   }());
